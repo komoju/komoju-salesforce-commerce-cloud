@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences xmlns="http://www.demandware.com/xml/impex/preferences/2007-03-31">
+    <custom-preferences>
+        <all-instances/>
+        <development>
+            <preference preference-id="availablePaymentMethods">{"c_availablePaymentMethods":[{"method1":{"id":"konbini","displayValue":{"en":"Konbini","ja":"コンビニ","ko":"편의점"},"enabled":true,"currency":"JPY"}},{"method2":{"id":"credit_card","displayValue":{"en":"Credit Card","ja":"クレジットカード","ko":"신용카드"},"enabled":true,"currency":"JPY"}},{"method3":{"id":"pay_easy","displayValue":{"en":"Pay Easy","ja":"Pay Easy","ko":"Pay Easy"},"enabled":true,"currency":"JPY"}},{"method4":{"id":"bank_transfer","displayValue":{"en":"Bank Transfer","ja":"銀行振込","ko":"은행 입금"},"enabled":true,"currency":"JPY"}},{"method5":{"id":"web_money","displayValue":{"en":"WebMoney","ja":"WebMoney","ko":"웹머니"},"enabled":true,"currency":"JPY"}},{"method6":{"id":"bit_cash","displayValue":{"en":"BitCash","ja":"ビットキャッシュ","ko":"비트 캐쉬"},"enabled":true,"currency":"JPY"}},{"method7":{"id":"net_cash","displayValue":{"en":"NET CASH","ja":"NET CASH","ko":"NET CASH"},"enabled":true,"currency":"JPY"}},{"method8":{"id":"merpay","displayValue":{"en":"Merpay","ja":"メルペイ","ko":"Merpay"},"enabled":true,"currency":"JPY"}},{"method9":{"id":"linepay","displayValue":{"en":"LINE Pay","ja":"LINE Pay","ko":"LINE Pay"},"enabled":true,"currency":"JPY"}},{"method10":{"id":"paypay","displayValue":{"en":"PayPay","ja":"PayPay","ko":"PayPay"},"enabled":true,"currency":"JPY"}}]}</preference>
+        </development>
+        <staging/>
+        <production/>
+    </custom-preferences>
+</preferences>

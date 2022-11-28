@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment-settings xmlns="http://www.demandware.com/xml/impex/paymentsettings/2009-09-15">
+    <payment-method method-id="komoju">
+        <enabled-flag>true</enabled-flag>
+        <processor-id>KomojuProcessor</processor-id>
+        <custom-attributes>
+            <custom-attribute attribute-id="isBicEnabled">true</custom-attribute>
+            <custom-attribute attribute-id="isSupportedBankListRequired">true</custom-attribute>
+            <custom-attribute attribute-id="klarnaLocale" xml:lang="x-default">DE-AT</custom-attribute>
+            <custom-attribute attribute-id="paymentType">Test</custom-attribute>
+        </custom-attributes>
+    </payment-method>
+</payment-settings>

@@ -1,0 +1,12 @@
+
+<div class="tab-pane active credit-card-content" id="credit-card-content" role="tabpanel">
+    <fieldset class="payment-form-fields">
+
+        <iscomment> payment method is komoju </iscomment>
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+            value="komoju"/>
+
+        <isinclude template="checkout/billing/paymentOptions/availableKomojuMethods" />
+
+    </fieldset>
+</div>

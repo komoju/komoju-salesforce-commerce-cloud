@@ -1,0 +1,53 @@
+<isscript>
+        var assets = require('*/cartridge/scripts/assets.js');
+        assets.addJs('/js/checkout.js');
+        assets.addCss('/css/checkout/checkout.css');
+        assets.addCss('/css/availableKomojuMethods.css');
+</isscript>
+<form>
+    <div class="emt pl-4">
+        <h4>${Resource.msg('select.payment.method', 'komojuPayment', null)}</h4><br>
+        <div class="btn-group">
+            <isloop items="${pdict.allpaymentmethod}" var="method" status="loopstate">
+                <div class="labelpay">
+                    <input type="radio" class="btn-check" name="options" id="${method.ID}" value="${method.ID}"
+                        autocomplete="off" ${loopstate.first?'checked':''} />
+                    <label class="" for="${method.ID}">
+                        <img class="credit-card-option" src="${URLUtils.staticURL('../images/')}${method.ID}.svg"
+                            width="100" height="45" alt="Komoju Payment" title="Komoju Payment"> </label>
+                    <div class="he">
+                       <isprint value="${method.displayName}" encoding="on" />
+                    </div>
+                    <iscomment> <button type="button" class="info-icon" data-toggle="modal" data-target="${'#'+method.ID}1">
+                         <span class="icon" aria-hidden="true">i</span>
+                    </button> </iscomment>
+
+                    <div class="modal fade" id="${method.ID}1" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+
+                        <!-- Add .modal-dialog-centered to .modal-dialog to vertically center the modal -->
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+
+
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">${Resource.msg('label.description', 'komojuPayment', null)}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <isprint value="${method.description}" encoding="on" />
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">${Resource.msg('label.close', 'komojuPayment', null)}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </isloop>
+        </div>
+    </div>
+</form>

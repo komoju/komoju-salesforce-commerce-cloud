@@ -1,0 +1,24 @@
+{
+    "hooks": [
+       
+        {
+            "name": "app.payment.processor.default",
+            "script": "./cartridge/scripts/hooks/payment/processor/default"
+        },
+       
+        {
+            "name": "app.payment.processor.komojuprocessor",
+            "script": "./cartridge/scripts/hooks/payment/processor/KomojuProcessor"
+        },
+        {
+            "name": "app.payment.form.processor.komojuprocessor",
+            "script": "./cartridge/scripts/hooks/payment/processor/Komoju_form_processor"
+        },
+     
+        {
+            "name": "app.payment.form.processor.default_form_processor",
+            "script": "./cartridge/scripts/hooks/payment/processor/default_form_processor"
+        }
+       
+    ]
+}

@@ -1,0 +1,11 @@
+cartridges/**/cartridge/static/**
+cartridges/app_storefront_base/**
+cartridges/modules/
+coverage/**
+cartridges/app_storefront_base
+
+# cartridges/int_komoju/**
+webpack.config.js
+cartridges/bm_app_storefront_base/
+cartridges/bm_app_storefront_base/cartridge/static/
+

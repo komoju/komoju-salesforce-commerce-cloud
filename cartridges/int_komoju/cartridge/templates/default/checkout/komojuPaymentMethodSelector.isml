@@ -1,0 +1,20 @@
+<isloop items=${pdict.order.billing.payment.applicablePaymentMethods} var="methods">
+    <isif condition="${methods.ID === 'komoju'}">
+        <span>${methods.ID}</span><br>
+        <isif condition="${pdict.customobject !== undefined && pdict.customobject !== null}">
+            <span class="selected">
+                <isprint value="${pdict.customobject.payment_method}" encoding="on" /></span>
+        <iselseif condition="${pdict.selected_method.selected_method != null}" />
+
+            <span class="selected">
+                <isprint value="${pdict.selected_method.selected_method}" encoding="on" /></span>
+
+        <iselse/>
+            <div>
+                <span class="selected">
+                </span>
+            </div>
+
+        </isif>
+    </isif>
+</isloop>

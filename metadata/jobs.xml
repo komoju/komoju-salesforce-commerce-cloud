@@ -4,7 +4,7 @@
         <description/>
         <parameters/>
         <flow>
-            <context site-id="TestSite"/>
+            <context site-id="RefArch"/>
             <step step-id="refundOrder" type="custom.komojuRefundStep" enforce-restart="false">
                 <description/>
                 <parameters/>
@@ -23,7 +23,7 @@
         <description/>
         <parameters/>
         <flow>
-            <context site-id="TestSite"/>
+            <context site-id="RefArch"/>
             <step step-id="komojuCancelProcess" type="custom.komojuCancelStep" enforce-restart="false">
                 <description/>
                 <parameters/>
@@ -42,7 +42,7 @@
         <description/>
         <parameters/>
         <flow>
-            <context site-id="TestSite"/>
+            <context site-id="RefArch"/>
             <step step-id="updatePaymentMethod1" type="ExecuteScriptModule" enforce-restart="false">
                 <description/>
                 <parameters>

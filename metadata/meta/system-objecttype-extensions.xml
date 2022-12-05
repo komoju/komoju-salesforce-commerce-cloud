@@ -51,6 +51,13 @@
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
+            <attribute-definition attribute-id="sessionidperma">
+                <display-name xml:lang="x-default">sessionidperma</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
             <attribute-definition attribute-id="done">
                 <display-name xml:lang="x-default">done</display-name>
                 <type>boolean</type>
@@ -161,6 +168,7 @@
                 <attribute attribute-id="session_url"/>
                 <attribute attribute-id="paymentidkomoju"/>
                 <attribute attribute-id="sessionidkomoju"/>
+                <attribute attribute-id="sessionidperma"/>
                 <attribute attribute-id="komojuRefundResponse"/>
                 <attribute attribute-id="komojuCancelResponse"/>
                 <attribute attribute-id="komojuRefundStatus"/>
@@ -253,7 +261,7 @@
             </attribute-group>
             <attribute-group group-id="komoju_transaction">
                 <display-name xml:lang="x-default">komoju_transaction</display-name>
-                <attribute attribute-id="payment_method" system="true"/>
+                <attribute attribute-id="payment_method"/>
                 <attribute attribute-id="prepaid_card_last_digits"/>
                 <attribute attribute-id="brand"/>
                 <attribute attribute-id="store"/>

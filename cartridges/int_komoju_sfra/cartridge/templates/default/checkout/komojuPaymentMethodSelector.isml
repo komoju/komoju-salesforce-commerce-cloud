@@ -1,0 +1,29 @@
+<div class="payment-details">
+    <isloop items=${pdict.order.billing.payment.selectedPaymentInstruments} var="payment">
+     <input type="hidden" class="checkMethod"  value=${payment.paymentMethod}>
+    <isif condition="${payment.paymentMethod === 'KOMOJU_HOSTED_PAGE'}">
+
+        <isif condition="${pdict.customobject !== undefined && pdict.customobject !== null}">
+            <iscomment> <span>${payment.paymentMethod}</span><br> </iscomment>
+            <span class="selected">
+                <isprint value="${pdict.customobject.paymentMethod}" encoding="on" /></span>
+        <iselseif condition="${pdict.selected_method.selected_method != null}" />
+            <iscomment> <span>${payment.paymentMethod}</span><br> </iscomment>
+
+            <span class="selected">
+                <isprint value="${pdict.selected_method.selected_method}" encoding="on" /></span>
+
+        <iselse/>
+            <iscomment> <span>${payment.paymentMethod}</span><br> </iscomment>
+            <div>
+                <span class="selected">
+                </span>
+            </div>
+            <span>${payment.komojuPaymentMethodType}</span><br>
+
+        </isif>
+    <iselseif condition="${payment.paymentMethod === 'CREDIT_CARD'}" />
+        <isinclude template="checkout/billing/paymentOptions/creditCardSummary" />
+    </isif>
+</isloop>
+</div>

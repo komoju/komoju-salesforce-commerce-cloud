@@ -1,9 +1,0 @@
-<li class="nav-item" data-method-id="${paymentOption.ID}">
-    <a  class="nav-link credit-card-tab active" data-toggle="tab" href="#credit-card-content" role="tab">
-        <iscomment> <img class="credit-card-option"
-              src="${URLUtils.staticURL('./images/komoju_pay.svg')}" width="100" height="45" alt="Komoju Payment"
-                title="Komoju Payment"
-        > </iscomment>
-        <span>${Resource.msg('method.name', 'komojuPayment', null)}</span>
-    </a>
-</li>

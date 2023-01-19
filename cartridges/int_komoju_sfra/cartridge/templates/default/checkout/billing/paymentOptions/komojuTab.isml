@@ -1,0 +1,5 @@
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+       <a  class="nav-link komoju-tab" data-toggle="tab" href="#komoju-content" role="tab">
+        <span>${Resource.msg('method.name', 'komojuPayment', null)}</span>
+    </a>
+</li>

@@ -1,0 +1,83 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        th,
+        td {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .universal {
+            width: 80%;
+            background-color: lightgray;
+            padding: 15px;
+        }
+
+        .headings {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tableTitle,
+        .tableData {
+            width: 33%;
+            text-align:center;
+        }
+
+        .emailReason {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="universal">
+
+        <div style="background-color: white;">
+
+            <div style="text-align:center;font-weight:bold;padding-bottom:1rem">
+                Following orders were failed during ${pdict.jobProcess} process
+            </div>
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" id="orderTable"
+                class="table table-striped table-bordered table-sm center">
+                <thead>
+                    <tr>
+                        <th class="table_header left paymentHeading tableTitle">Order Id</th>
+                        <th class="table_header center tableTitle">Amount</th>
+                        <th class="table_header center tableTitle">Error Message</th>
+                    </tr>
+                    <tr class="emptyTR"></tr>
+                </thead>
+
+                <tbody class="tbodyy">
+                    <isloop items="${pdict.allFailedOrders}" var="order">
+                        <tr class="methodList">
+
+                            <td class="bold left tableData" nowrap="nowrap">
+                                <span>${order.orderNo}</span>
+                            </td>
+
+                            <td class="center tableData" align="center">
+                                <span>${order.totalGrossPrice}</span>
+                            </td>
+                            <td class="center tableData" align="center">
+                                <span>${order.errorMsg}</span>
+                            </td>
+                        </tr>
+                        <tr class="emptyTR"></tr>
+                        <tr class="emptyTR"></tr>
+                    </isloop>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</body>
+
+</html>

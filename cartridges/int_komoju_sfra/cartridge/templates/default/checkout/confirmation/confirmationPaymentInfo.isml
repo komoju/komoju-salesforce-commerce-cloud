@@ -1,0 +1,11 @@
+<iscomment>
+    This template is created to render payment information in the order confirmation email.
+</iscomment>
+<isloop items="${pdict.order.billing.payment.selectedPaymentInstruments}" var="payment">
+    <isif condition="${payment.paymentMethod === 'KOMOJU_HOSTED_PAGE'}">
+        <div class="confirmationSpan">
+            <span>${Resource.msg('msg.payment.type.komoju', 'confirmation', null)}
+                ${payment.komojuPaymentMethodType}</span>
+        </div>
+    </isif>
+</isloop>

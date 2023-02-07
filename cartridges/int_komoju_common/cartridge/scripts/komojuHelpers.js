@@ -1,18 +1,70 @@
 
 'use Strict';
-var service = require('*/cartridge/services/komojuServiceCreateSession');
+var komojuServiceCreateSession = require('*/cartridge/services/komojuServiceCreateSession');
+var komojuServiceCancelSession = require('*/cartridge/services/komojuServiceCancelSession');
 var Transaction = require('dw/system/Transaction');
 var Status = require('dw/system/Status');
 var Logger = require('dw/system/Logger');
 var OrderMgr = require('dw/order/OrderMgr');
+var Currency = require('dw/util/Currency');
+var paymentMethodCurrency;
+var paymentMethodCurrencySymbol;
 
 /**
  * Creates session
- * @param {Object} body local instance of request object
- * @returns {Object} a plain object of the current customer's account
+ * @param {Object} body body to be sent to the komoju servers for creating a session
+ * @returns {Object} create session api response
  */
 function CreateSession(body) {
-    return service.KomojuService.call(body);
+    return komojuServiceCreateSession.KomojuService.call(body);
+}
+
+/**
+ * cancel session
+ * @param {Object} body contains session id to be sent for cancelling the session
+ * @returns {Object} cancel session api response
+ */
+function CancelSession(body) {
+    return komojuServiceCancelSession.KomojuService.call(body);
+}
+
+
+/**
+ * Set payment instrument for authorize payment status
+ * @param {Object} webHookResponse Authorize webhook response
+ * @param {Object} order Current placed Order
+ */
+function setInstrumentFromAuthorizeWebHook(webHookResponse, order) {
+    var paymentMethod = webHookResponse.data.payment_details.type;
+    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
+    var paymentInstrument;
+    try {
+        Transaction.wrap(function () {
+            Object.keys(paymentInstruments).forEach(function (item) {
+                paymentInstrument = paymentInstruments[item];
+            });
+            paymentMethodCurrency = Currency.getCurrency(webHookResponse.data.currency);
+            paymentMethodCurrencySymbol = paymentMethodCurrency.symbol;
+            paymentInstrument.custom.transactionStatus = webHookResponse.data.status;
+            paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
+            paymentInstrument.custom.komojuPaymentId = webHookResponse.data.id;
+            paymentInstrument.custom.komojuExchangeRate = order.custom.komojuExchangeRate;
+            paymentInstrument.custom.komojuProcessingFee = parseFloat((webHookResponse.data.payment_method_fee).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            paymentInstrument.custom.komojuProcessingCurrency = webHookResponse.data.currency;
+            paymentInstrument.custom.komojuExchangeAmount = parseFloat((webHookResponse.data.amount).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+        });
+        switch (paymentMethod) {
+            case 'konbini':
+                Transaction.wrap(function () {
+                    paymentInstrument.custom.store = webHookResponse.data.payment_details.store;
+                });
+                break;
+            default:
+                Logger.warn('the payment method does not contain any additional information');
+        }
+    } catch (e) {
+        Logger.error('error in transaction for setting payment instrument in the komjuHelper file' + e.fileName + ':' + e.lineNumber);
+    }
 }
 
 /**
@@ -24,22 +76,28 @@ function CreateSession(body) {
 function setinstruments(komojuServiceGetResponseResult, order) {
     var transactionStatus = komojuServiceGetResponseResult.object.payment.status;
     var paymentMethod = komojuServiceGetResponseResult.object.payment.payment_details.type;
+    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
+    var paymentInstrument;
     try {
+        Transaction.wrap(function () {
+            Object.keys(paymentInstruments).forEach(function (item) {
+                paymentInstrument = paymentInstruments[item];
+            });
+            paymentMethodCurrency = Currency.getCurrency(komojuServiceGetResponseResult.object.payment.currency);
+            paymentMethodCurrencySymbol = paymentMethodCurrency.symbol;
+            paymentInstrument.custom.transactionStatus = transactionStatus;
+            paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
+            paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
+            paymentInstrument.custom.komojuExchangeRate = order.custom.komojuExchangeRate;
+            paymentInstrument.custom.komojuProcessingFee = parseFloat((komojuServiceGetResponseResult.object.payment.payment_method_fee).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            paymentInstrument.custom.komojuProcessingCurrency = komojuServiceGetResponseResult.object.payment.currency;
+            if (komojuServiceGetResponseResult.object.currency === 'USD' || komojuServiceGetResponseResult.object.currency === 'EUR') {
+                paymentInstrument.custom.komojuExchangeAmount = parseFloat((order.custom.komojuExchangeRate * ((komojuServiceGetResponseResult.object.amount) / 100)).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            } else {
+                paymentInstrument.custom.komojuExchangeAmount = parseFloat((order.custom.komojuExchangeRate * (komojuServiceGetResponseResult.object.amount)).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            }
+        });
         switch (paymentMethod) {
-            case 'paypay':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.brand);
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
             case 'credit_card':
                 var expMonth = komojuServiceGetResponseResult.object.payment.payment_details.month;
                 var expYear = komojuServiceGetResponseResult.object.payment.payment_details.year;
@@ -47,13 +105,6 @@ function setinstruments(komojuServiceGetResponseResult, order) {
                 var cardType = komojuServiceGetResponseResult.object.payment.payment_details.brand;
                 var updatedcardType = cardType.charAt(0).toUpperCase() + cardType.slice(1);
                 Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
                     paymentInstrument.custom.brand = komojuServiceGetResponseResult.object.payment.payment_details.brand;
                     paymentInstrument.setCreditCardNumber('********' + creditCardNumber);
                     paymentInstrument.setCreditCardType(updatedcardType);
@@ -62,215 +113,25 @@ function setinstruments(komojuServiceGetResponseResult, order) {
                     paymentInstrument.setCreditCardToken(
                         Math.random().toString(36).substr(2)
                     );
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'linepay':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.brand);
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
                 });
                 break;
             case 'konbini':
                 Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
                     paymentInstrument.custom.store = komojuServiceGetResponseResult.object.payment.payment_details.store;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'merpay':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                });
-                break;
-            case 'bank_transfer':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'payeasy':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
                 });
                 break;
             case 'web_money':
                 Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
                     if (komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0] !== undefined) { paymentInstrument.custom.prepaidCardLastDigits = komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0].last_four_digits; }
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
                 });
                 break;
             case 'net_cash':
                 Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
                     if (komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0] !== undefined) { paymentInstrument.custom.prepaidCardLastDigits = komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0].last_four_digits; }
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
                 });
                 break;
-            case 'bit_cache':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'mobile':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'sofortbanking':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'bancontact':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'giropay':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod; paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'ideal':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'paidy':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod; paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-            case 'pay_easy':
-                Transaction.wrap(function () {
-                    var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
-                    var paymentInstrument;
-                    Object.keys(paymentInstruments).forEach(function (item) {
-                        paymentInstrument = paymentInstruments[item];
-                    });
-                    paymentInstrument.setCreditCardType(komojuServiceGetResponseResult.object.payment.payment_details.type);
-                    paymentInstrument.custom.transactionStatus = transactionStatus;
-                    paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
-                    paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
-                });
-                break;
-
             default:
-                Logger.warn('the payment method is not configured,kindly contact developer');
+                Logger.warn('the payment method has only basic information');
         }
     } catch (e) {
         Logger.error('error in transaction for setting payment instrument in the komjuHelper file' + e.fileName + ':' + e.lineNumber);
@@ -435,7 +296,11 @@ function verifyWebhookCall(body, komojuSignature) {
     var encryptor = new Mac(Mac.HMAC_SHA_256);
 
     var verified = false;
-    var webhooksAuthenticationCode = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.webhooksAuthenticationCode;
+    var webhooksAuthenticationCode;
+    var webhooksAuthenticationCodeObject = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1);
+    if (webhooksAuthenticationCodeObject) {
+        webhooksAuthenticationCode = webhooksAuthenticationCodeObject.custom.webhooksAuthenticationCode;
+    }
     var signatureDigest = encryptor.digest(body, webhooksAuthenticationCode);
     var generatedSignature = cryptoLib.Encoding.toHex(signatureDigest);
     if (generatedSignature === komojuSignature) {
@@ -473,7 +338,9 @@ function createOrder(currentBasket, tempOrderNumber) {
 
 module.exports = {
     createSession: CreateSession,
+    cancelSession: CancelSession,
     setinstruments: setinstruments,
+    setInstrumentFromAuthorizeWebHook: setInstrumentFromAuthorizeWebHook,
     cancelOrder: cancelOrder,
     failorder: failorder,
     undoFail: undoFail,

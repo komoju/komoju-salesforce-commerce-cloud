@@ -8,6 +8,7 @@
 var server = require('server');
 var URLUtils = require('dw/web/URLUtils');
 var Logger = require('dw/system/Logger');
+var Resource = require('dw/web/Resource');
 var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
 var consentTracking = require('*/cartridge/scripts/middleware/consentTracking');
 
@@ -57,18 +58,7 @@ server.prepend(
             order = OrderMgr.getOrder(tempOrderNumber, tempOrderToken);
         }
 
-        var currentPaymentInstrument;
         var viewData = res.getViewData();
-        if (order) {
-            currentPaymentInstrument = order.getPaymentInstruments();
-        }
-        if (requestStage !== 'submitted' && order != null && order.custom.komojuOrderProcessed === true) {
-            res.redirect(URLUtils.url('Home-Show'));
-        }
-
-        if (requestStage !== 'submitted' && order != null && currentPaymentInstrument[0] != null && currentPaymentInstrument[0].custom.transactionStatus === 'authorized') {
-            res.redirect(URLUtils.url('Home-Show'));
-        }
 
 
         if (order != null && requestStage === 'submitted' && order.status.displayValue !== 'FAILED') {
@@ -97,11 +87,19 @@ server.prepend(
                     var object = currentPaymentMethod[paymentMethodKey];
                     method.ID = object.id;
                     method.displayName = object.displayValue[locale];
-                    method.currency = object.currency;
+                    if (object.currency !== currency) {
+                        if (currency === 'JPY') {
+                            method.currency = '(' + Resource.msgf('japanese.currency.msg', 'komojuPayment', null, object.currency) + ')';
+                        } else {
+                            method.currency = '(' + Resource.msgf('english.currency.msg', 'komojuPayment', null, object.currency) + ')';
+                        }
+                    } else {
+                        method.currency = '';
+                    }
                     method.enabled = object.enabled;
-                    if (method.enabled !== undefined && method.enabled === true && method.ID !== 'credit_card') {
+                    if (object.enabled !== undefined && object.enabled === true && object.id !== 'credit_card') {
                         allPaymentMethods.push(method);
-                    } else if (method.enabled !== undefined && method.enabled === true && method.ID === 'credit_card' && method.currency === currency) { allPaymentMethods.push(method); }
+                    } else if (object.enabled !== undefined && object.enabled === true && object.id === 'credit_card' && object.currency === currency) { allPaymentMethods.push(method); }
                 });
             });
         }

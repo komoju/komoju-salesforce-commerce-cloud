@@ -43,7 +43,7 @@ function sendCancelErrorEmail(ordersWhichAreNotUpdated) {
 function komojuCancelOrder() {
     var komojuService = require('*/cartridge/services/cancelOrderKomoju');
 
-    var bypassChecks = ['Cancelled', 'Refunded', 'Failed', Order.ORDER_STATUS_CANCELLED, Order.PAYMENT_STATUS_NOTPAID];
+    var bypassChecks = ['Cancelled', 'Refunded', 'Rejected', Order.ORDER_STATUS_CANCELLED, Order.PAYMENT_STATUS_NOTPAID];
     var allOrders = OrderMgr.searchOrders('status = {3} AND paymentStatus = {4} AND custom.komojuCancelStatus != {0} AND custom.komojuCancelStatus != {2} AND custom.komojuRefundStatus != {1} AND custom.komojuRefundStatus != {2}', 'orderNo desc', bypassChecks[0], bypassChecks[1], bypassChecks[2], bypassChecks[3], bypassChecks[4]);
     var emailToggleValue = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.emailToggleValue;
 
@@ -67,9 +67,14 @@ function komojuCancelOrder() {
                         customKomojuSourceLogger.info(JSON.stringify(paymentIdKomoju));
                         cancelResponse = komojuService.cancelOrderKomoju.call(paymentIdKomoju);
                     } catch (e) {
-                        Logger.error('error in service refundKomoju call ' + e.toString() + ' in ' + e.fileName + ':' + e.lineNumber);
+                        Logger.error('error in service cancelKomoju call ' + e.toString() + ' in ' + e.fileName + ':' + e.lineNumber);
                     }
                     if (cancelResponse.status === 'ERROR') {
+                        if (JSON.parse(cancelResponse.errorMessage).error.code === 'not_cancellable') {
+                            currentOrder.custom.komojuCancelStatus = 'Rejected';
+                        } else {
+                            currentOrder.custom.komojuCancelStatus = 'Failed';
+                        }
                         let errorJson;
                         errorOccured = true;
                         objectForFailedOrders.orderNo = currentOrder.orderNo;
@@ -80,14 +85,13 @@ function komojuCancelOrder() {
                             customKomojuErrors.error('cancelOrderKomoju API Service is Unavailable: ' + cancelResponse.unavailableReason);
                             errorJson = JSON.parse(cancelResponse.errorMessage).error.message;
                         } else if (cancelResponse.error && cancelResponse.errorMessage) {
-                            customKomojuErrors.error('cancelOrderKomoju  API responded with the following error message: ' + cancelResponse.errorMessage);
+                            customKomojuErrors.error('cancelOrderKomoju  API responded with the following error message: ' + cancelResponse.errorMessage + ' having order no ' + currentOrder.orderNo);
                             errorJson = JSON.parse(cancelResponse.errorMessage).error.message;
                         } else {
                             customKomojuErrors.error('Error in cancelOrderKomoju API Response');
                             errorJson = 'Error in cancelOrderKomoju API Response';
                         }
                         currentOrder.custom.komojuCancelResponse = errorJson;
-                        currentOrder.custom.komojuCancelStatus = 'Failed';
                     } else {
                         customKomojuSourceLogger.info('-----cancelOrderKomoju komojuServiceCreateSession API Response Body-----');
                         customKomojuSourceLogger.info(JSON.stringify(cancelResponse.object));

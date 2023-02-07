@@ -14,9 +14,10 @@
     "id": "fr_FR",
     "currencyCode": "EUR"
 }, {
-    "id": "ko_KR",
-    "currencyCode": "KRW"
-}, {
     "id": "it_IT",
     "currencyCode": "EUR"
-}]
+}, {
+    "id": "ko_KR",
+    "currencyCode": "KRW"
+}
+]

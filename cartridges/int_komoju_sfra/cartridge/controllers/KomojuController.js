@@ -6,6 +6,7 @@ var Transaction = require('dw/system/Transaction');
 var OrderMgr = require('dw/order/OrderMgr');
 var komojuHelpers = require('*/cartridge/scripts/komojuHelpers');
 var fetchDisplayName = require('*/cartridge/scripts/fetchDisplayName');
+var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
 var Logger = require('dw/system/Logger');
 var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
 var customKomojuErrors = Logger.getLogger('customKomojuErrors', 'customKomojuErrors');
@@ -133,14 +134,14 @@ server.get('geturl', function (req, res, next) {
     // what to do for this komoju does not support cancel url functionality
     var cancelUrl = URLUtils.abs('Checkout-Begin?stage=placeorder');
     var komojuCreateSessionResult;
+    var komojuCancelSessionResult;
+    var komojuExchangeRate;
+    var previousSessionId;
     var method;
     var viewData = res.getViewData();
 
     method = currentBasket.custom.komojuPaymentMethodType;
 
-    // if (!method) {
-    //     res.redirect(URLUtils.https('Cart-Show'));
-    // }
     var name = currentBasket.billingAddress.fullName;
     var address1 = currentBasket.shipments[0].shippingAddress.address1;
     var address2 = currentBasket.shipments[0].shippingAddress.address2;
@@ -162,6 +163,18 @@ server.get('geturl', function (req, res, next) {
         'payment_data[external_order_num]': tempOrderNumber,
         default_locale: locale
     };
+
+    if (session.privacy.session_id) {
+        previousSessionId = session.privacy.session_id;
+        try {
+            komojuCancelSessionResult = komojuHelpers.cancelSession(previousSessionId);
+        } catch (e) {
+            Logger.error('Error while executing the service komojuServiceCancelSession ' + e.toString() + ' in ' + e.fileName + ':' + e.lineNumber);
+        }
+        if (komojuCancelSessionResult.status === 'OK') {
+            session.privacy.session_id = null;
+        }
+    }
     try {
         customKomojuSourceLogger.info('-----KOMOJU sessioncreate API Request Body-----');
         customKomojuSourceLogger.info(JSON.stringify(body));
@@ -174,6 +187,7 @@ server.get('geturl', function (req, res, next) {
         customKomojuSourceLogger.info(JSON.stringify(komojuCreateSessionResult.object));
         sessionId = komojuCreateSessionResult.object.id;
         sessionUrl = komojuCreateSessionResult.object.session_url;
+        komojuExchangeRate = parseFloat((komojuCreateSessionResult.object.payment_methods[0].exchange_rate).toFixed(4));
         Transaction.wrap(function () {
             currentBasket.custom.komojuSessionId = sessionId;
             currentBasket.custom.komojuSessionUrl = sessionUrl;
@@ -225,6 +239,7 @@ server.get('geturl', function (req, res, next) {
             order.createPaymentInstrument(
                 'KOMOJU_HOSTED_PAGE', order.totalGrossPrice
             );
+            order.custom.komojuExchangeRate = komojuExchangeRate;
         }
 
 
@@ -239,7 +254,6 @@ server.get('geturl', function (req, res, next) {
         order.custom.komojuSessionId = sessionId;
     });
 
-
     res.json({
         sessionURL: sessionUrl,
         error: false
@@ -252,7 +266,6 @@ server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https,
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
     var hooksHelper = require('*/cartridge/scripts/helpers/hooks');
-    var COHelpers = require('*/cartridge/scripts/checkout/checkoutHelpers');
     var addressHelpers = require('*/cartridge/scripts/helpers/addressHelpers');
     var currentBasket = BasketMgr.getCurrentBasket();
     var komojuHelper = require('*/cartridge/scripts/komojuHelpers');
@@ -277,12 +290,6 @@ server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https,
 
     if (tempOrderNumber && tempOrderToken) {
         order = OrderMgr.getOrder(tempOrderNumber, tempOrderToken);
-    }
-    if (session.privacy.tempOrderNumber && session.privacy.tempOrderToken) {
-        session.privacy.tempOrderNumber = null;
-        session.privacy.tempOrderToken = null;
-        delete session.privacy.tempOrderNumber;
-        delete session.privacy.tempOrderToken;
     }
 
     if (!order) {
@@ -663,12 +670,11 @@ server.post('HandleWebHooksCaptureComplete', function (req, res, next) {
             Transaction.wrap(function () {
                 if (komojuOrder && orderStatus === 'CREATED') {
                     OrderMgr.placeOrder(komojuOrder);
-                    komojuOrder.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
-                    komojuOrder.setExportStatus(Order.EXPORT_STATUS_READY);
-                } else if (komojuOrder && (orderStatus === 'NEW' || orderStatus === 'OPEN')) {
-                    komojuOrder.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
-                    komojuOrder.setExportStatus(Order.EXPORT_STATUS_READY);
+                } else if (orderStatus === 'CANCELLED') {
+                    OrderMgr.undoCancelOrder(komojuOrder);
                 }
+                komojuOrder.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
+                komojuOrder.setExportStatus(Order.EXPORT_STATUS_READY);
                 paymentInstrument = komojuOrder.getPaymentInstruments();
                 paymentInstrument[0].custom.transactionStatus = body.data.status;
                 komojuOrder.setPaymentStatus(2);
@@ -728,15 +734,12 @@ server.post('HandleWebHooksExpired', function (req, res, next) {
                 var paymentInstrument;
                 if (orderStatus === 'NEW' || orderStatus === 'OPEN') {
                     OrderMgr.cancelOrder(komojuOrder);
-                    paymentInstrument = komojuOrder.getPaymentInstruments();
-                    paymentInstrument[0].custom.transactionStatus = body.data.status;
-                    komojuOrder.setPaymentStatus(0);
                 } else if (orderStatus === 'CREATED') {
                     OrderMgr.failOrder(komojuOrder, false);
-                    paymentInstrument = komojuOrder.getPaymentInstruments();
-                    paymentInstrument[0].custom.transactionStatus = body.data.status;
-                    komojuOrder.setPaymentStatus(0);
                 }
+                paymentInstrument = komojuOrder.getPaymentInstruments();
+                paymentInstrument[0].custom.transactionStatus = body.data.status;
+                komojuOrder.setPaymentStatus(0);
             });
         } else {
             customKomojuErrors.error(Resource.msgf('authentication.code.mismatch', 'komojuPayment', null, body.type, komojuOrder.orderNo));
@@ -749,16 +752,31 @@ server.post('HandleWebHooksExpired', function (req, res, next) {
 
 server.post('HandleWebHooksPaymentAuthorized', function (req, res, next) {
     var sessionIdKomoju = JSON.parse(req.body).data.session;
-    var URLUtils = require('dw/web/URLUtils');
+    var Order = require('dw/order/Order');
     var komojuOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
     var body = JSON.parse(req.body);
+    var paymentInstrument;
+    var orderStatus;
     var bodyToEncode = req.body;
     var komojuSignature = req.httpHeaders['x-komoju-signature'];
     var webhookCallVerified = komojuHelpers.verifyWebhookCall(bodyToEncode, komojuSignature);
 
     if (komojuOrder) {
         if (webhookCallVerified) {
-            res.redirect(URLUtils.https('KomojuController-KomojuOrder'));
+            orderStatus = komojuOrder.getStatus().toString();
+            Transaction.wrap(function () {
+                if (orderStatus === 'CREATED') {
+                    OrderMgr.placeOrder(komojuOrder);
+                }
+                komojuOrder.setConfirmationStatus(Order.CONFIRMATION_STATUS_CONFIRMED);
+                komojuOrder.setExportStatus(Order.EXPORT_STATUS_READY);
+                paymentInstrument = komojuOrder.getPaymentInstruments();
+                paymentInstrument[0].custom.transactionStatus = body.data.status;
+                komojuOrder.setPaymentStatus(0);
+                komojuOrder.custom.komojuPaymentId = body.data.id;
+            });
+            komojuHelpers.setInstrumentFromAuthorizeWebHook(body, komojuOrder);
+            COHelpers.handlePayments(komojuOrder, komojuOrder.orderNo);
         } else {
             customKomojuErrors.error(Resource.msgf('authentication.code.mismatch', 'komojuPayment', null, body.type, komojuOrder.orderNo));
         }

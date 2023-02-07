@@ -43,7 +43,7 @@ function sendRefundErrorEmail(ordersWhichAreNotUpdated) {
 function refundKomoju() {
     var komojuService = require('*/cartridge/services/refundKomoju');
 
-    var bypassChecks = ['Cancelled', 'Refunded', 'Failed', Order.ORDER_STATUS_CANCELLED, Order.PAYMENT_STATUS_PAID];
+    var bypassChecks = ['Cancelled', 'Refunded', 'Rejected', Order.ORDER_STATUS_CANCELLED, Order.PAYMENT_STATUS_PAID];
     var allOrders = OrderMgr.searchOrders('status = {3} AND paymentStatus = {4} AND custom.komojuCancelStatus != {0} AND custom.komojuCancelStatus != {2} AND custom.komojuRefundStatus != {1} AND custom.komojuRefundStatus != {2}', 'orderNo desc', bypassChecks[0], bypassChecks[1], bypassChecks[2], bypassChecks[3], bypassChecks[4]);
 
     var emailToggleValue = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.emailToggleValue;
@@ -71,6 +71,11 @@ function refundKomoju() {
                         Logger.error('error in service refundKomoju call ' + e.toString() + ' in ' + e.fileName + ':' + e.lineNumber);
                     }
                     if (refundResponse.status === 'ERROR') {
+                        if (JSON.parse(refundResponse.errorMessage).error.code === 'not_refundable') {
+                            currentOrder.custom.komojuRefundStatus = 'Rejected';
+                        } else {
+                            currentOrder.custom.komojuRefundStatus = 'Failed';
+                        }
                         let errorJson;
                         errorOccured = true;
                         objectForFailedOrders.orderNo = currentOrder.orderNo;
@@ -88,7 +93,6 @@ function refundKomoju() {
                             errorJson = 'Error in refundKomoju API Response';
                         }
                         currentOrder.custom.komojuRefundResponse = errorJson;
-                        currentOrder.custom.komojuRefundStatus = 'Failed';
                     } else {
                         customKomojuSourceLogger.info('-----refundKomoju API Response Body-----');
                         customKomojuSourceLogger.info(JSON.stringify(refundResponse.object));

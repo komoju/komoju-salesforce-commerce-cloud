@@ -13,7 +13,6 @@ server.prepend(
 
         var Transaction = require('dw/system/Transaction');
         var currentBasket = BasketMgr.getCurrentBasket();
-       // var method = req.httpParameterMap.options;
         Transaction.wrap(function () {
             currentBasket.custom.komojuPaymentMethodType = req.httpParameterMap.options;
             var paymentInstruments = currentBasket.getPaymentInstruments();

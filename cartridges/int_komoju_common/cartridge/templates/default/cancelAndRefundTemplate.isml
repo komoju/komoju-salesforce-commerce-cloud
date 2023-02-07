@@ -1,10 +1,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title></title>
     <style>
         th,
         td {
@@ -32,25 +32,34 @@
         .emailReason {
             width: 100%;
         }
+        .emailTemplateHeader {
+            text-align: center;
+            font-weight: bold;
+            padding-bottom: 1rem;
+        }
+
+        .emailTemplateUniversal {
+            background-color: white;
+        }
     </style>
 </head>
 
 <body>
     <div class="universal">
 
-        <div style="background-color: white;">
+        <div class="emailTemplateUniversal">
 
-            <div style="text-align:center;font-weight:bold;padding-bottom:1rem">
-                Following orders were failed during ${pdict.jobProcess} process
+            <div class="emailTemplateHeader">
+                ${Resource.msgf('job.email.body.header', 'cancelAndRefundTemplate', null, pdict.jobProcess)}
             </div>
 
             <table border="0" cellpadding="0" cellspacing="0" width="100%" id="orderTable"
                 class="table table-striped table-bordered table-sm center">
                 <thead>
                     <tr>
-                        <th class="table_header left paymentHeading tableTitle">Order Id</th>
-                        <th class="table_header center tableTitle">Amount</th>
-                        <th class="table_header center tableTitle">Error Message</th>
+                        <th class="table_header left paymentHeading tableTitle">${Resource.msgf('email.table.orderid', 'cancelAndRefundTemplate', null, pdict.jobProcess)}</th>
+                        <th class="table_header center tableTitle">${Resource.msgf('email.table.amount', 'cancelAndRefundTemplate', null, pdict.jobProcess)}</th>
+                        <th class="table_header center tableTitle">${Resource.msgf('email.table.errormessage', 'cancelAndRefundTemplate', null, pdict.jobProcess)}</th>
                     </tr>
                     <tr class="emptyTR"></tr>
                 </thead>

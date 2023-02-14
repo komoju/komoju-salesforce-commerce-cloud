@@ -1,56 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <services xmlns="http://www.demandware.com/xml/impex/services/2014-09-26">
-
-    <service-credential service-credential-id="KomojuService">
-        <url>https://komoju.com/api/v1/sessions</url>
-        <user-id>sk_test_3otyi104vqq3vq0ameqw0lbe</user-id>
-        <password masked="true">********</password>
-    </service-credential>
-
-    <service-credential service-credential-id="komojuGetPaymentMethods">
-        <url>https://komoju.com/api/v1/payment_methods</url>
-        <user-id>sk_test_3otyi104vqq3vq0ameqw0lbe</user-id>
-        <password masked="true">********</password>
-    </service-credential>
-
-    <service-credential service-credential-id="komojuCancelAndRefundService">
-        <url>https://komoju.com/api/v1/payments/</url>
+    <service-credential service-credential-id="KOMOJUCredential">
+        <url>https://komoju.com/api/v1</url>
         <user-id/>
-        <password masked="true">********</password>
+        <password/>
     </service-credential>
 
+    <service-profile service-profile-id="KOMOJUProfile">
+        <timeout-millis>1000</timeout-millis>
+        <rate-limit-enabled>false</rate-limit-enabled>
+        <rate-limit-calls>0</rate-limit-calls>
+        <rate-limit-millis>0</rate-limit-millis>
+        <cb-enabled>true</cb-enabled>
+        <cb-calls>0</cb-calls>
+        <cb-millis>0</cb-millis>
+    </service-profile>
 
-    <service service-id="KomojuService">
+    <service service-id="KOMOJUService">
         <service-type>HTTP</service-type>
         <enabled>true</enabled>
         <log-prefix/>
         <comm-log-enabled>false</comm-log-enabled>
         <force-prd-enabled>true</force-prd-enabled>
         <mock-mode-enabled>false</mock-mode-enabled>
-        <profile-id/>
-        <credential-id>KomojuService</credential-id>
+        <profile-id>KOMOJUProfile</profile-id>
+        <credential-id>KOMOJUCredential</credential-id>
     </service>
 
-    <service service-id="komojuGetPaymentMethods">
+    <service service-id="KOMOJUCancelAndRefundService">
         <service-type>HTTP</service-type>
         <enabled>true</enabled>
         <log-prefix/>
         <comm-log-enabled>false</comm-log-enabled>
         <force-prd-enabled>true</force-prd-enabled>
         <mock-mode-enabled>false</mock-mode-enabled>
-        <profile-id/>
-        <credential-id>komojuGetPaymentMethods</credential-id>
+        <profile-id>KOMOJUProfile</profile-id>
+        <credential-id>KOMOJUCredential</credential-id>
     </service>
 
-    <service service-id="komojuCancelAndRefundService">
+    <service service-id="KOMOJUGetPaymentMethods">
         <service-type>HTTP</service-type>
         <enabled>true</enabled>
         <log-prefix/>
-        <comm-log-enabled>true</comm-log-enabled>
+        <comm-log-enabled>false</comm-log-enabled>
         <force-prd-enabled>true</force-prd-enabled>
         <mock-mode-enabled>false</mock-mode-enabled>
-        <profile-id/>
-        <credential-id>komojuCancelAndRefundService</credential-id>
+        <profile-id>KOMOJUProfile</profile-id>
+        <credential-id>KOMOJUCredential</credential-id>
     </service>
 
 </services>

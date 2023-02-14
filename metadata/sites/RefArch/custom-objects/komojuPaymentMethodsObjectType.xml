@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<custom-objects xmlns="http://www.demandware.com/xml/impex/customobject/2006-10-31">
+    <custom-object type-id="komojuPaymentMethodsObjectType" object-id="1">
+        <object-attribute attribute-id="availableKomojuPaymentMethods"></object-attribute>
+        <object-attribute attribute-id="komojuSecretKey"></object-attribute>
+        <object-attribute attribute-id="komojuEmail"></object-attribute>
+        <object-attribute attribute-id="emailToggleValue"></object-attribute>
+        <object-attribute attribute-id="webhooksAuthenticationCode"></object-attribute>
+    </custom-object>
+</custom-objects>

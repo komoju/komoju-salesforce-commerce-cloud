@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jobs xmlns="http://www.demandware.com/xml/impex/jobs/2015-07-01">
-	<job job-id="komojuRefundProcess" priority="0">
+    <job job-id="komojuRefundProcess" priority="0">
         <description/>
         <parameters/>
         <flow>
@@ -12,10 +12,14 @@
         </flow>
         <rules/>
         <triggers>
-            <run-once enabled="false">
-                <date>2022-10-18Z</date>
-                <time>10:50:54.000Z</time>
-            </run-once>
+            <run-recurring enabled="true">
+                <recurrence>
+                    <date-from>2023-01-01Z</date-from>
+                    <start-time>14:00:00.000Z</start-time>
+                    <interval>1d</interval>
+                    <day-of-week/>
+                </recurrence>
+            </run-recurring>
         </triggers>
     </job>
 
@@ -31,22 +35,26 @@
         </flow>
         <rules/>
         <triggers>
-            <run-once enabled="false">
-                <date>2022-11-18Z</date>
-                <time>14:34:19.000Z</time>
-            </run-once>
+            <run-recurring enabled="true">
+                <recurrence>
+                    <date-from>2023-01-01Z</date-from>
+                    <start-time>00:00:00.000Z</start-time>
+                    <interval>1h</interval>
+                    <day-of-week/>
+                </recurrence>
+            </run-recurring>
         </triggers>
     </job>
 
-	<job job-id="updatePayMentMethod" priority="0">
+    <job job-id="updatePaymentMethod" priority="0">
         <description/>
         <parameters/>
         <flow>
             <context site-id="RefArch"/>
-            <step step-id="updatePaymentMethod1" type="ExecuteScriptModule" enforce-restart="false">
+            <step step-id="updatePaymentMethodStep" type="ExecuteScriptModule" enforce-restart="false">
                 <description/>
                 <parameters>
-                    <parameter name="ExecuteScriptModule.Module">int_komoju/cartridge/scripts/updatePaymentMethod</parameter>
+                    <parameter name="ExecuteScriptModule.Module">int_komoju_common/cartridge/scripts/updatePaymentMethod</parameter>
                     <parameter name="ExecuteScriptModule.FunctionName">execute</parameter>
                     <parameter name="ExecuteScriptModule.Transactional">true</parameter>
                 </parameters>
@@ -54,23 +62,10 @@
         </flow>
         <rules/>
         <triggers>
-            <run-recurring enabled="true">
-                <recurrence>
-                    <date-from>2022-11-14Z</date-from>
-                    <date-to>2022-12-14Z</date-to>
-                    <start-time>20:44:11.000Z</start-time>
-                    <interval>1h</interval>
-                    <day-of-week>
-                        <weekday>Monday</weekday>
-                        <weekday>Tuesday</weekday>
-                        <weekday>Thursday</weekday>
-                        <weekday>Friday</weekday>
-                        <weekday>Sunday</weekday>
-                        <weekday>Saturday</weekday>
-                        <weekday>Wednesday</weekday>
-                    </day-of-week>
-                </recurrence>
-            </run-recurring>
+            <run-once enabled="true">
+                <date>2023-01-01Z</date>
+                <time>00:00:00.000Z</time>
+            </run-once>
         </triggers>
     </job>
 </jobs>

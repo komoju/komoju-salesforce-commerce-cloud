@@ -2,29 +2,22 @@
 <metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
     <type-extension type-id="Basket">
         <custom-attribute-definitions>
-            <attribute-definition attribute-id="count">
-                <display-name xml:lang="x-default">count</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>true</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
             <attribute-definition attribute-id="komojuPaymentMethodType">
-                <display-name xml:lang="x-default">komojuPaymentMethodType</display-name>
+                <display-name xml:lang="x-default">KOMOJU Payment Method Type</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="session_url">
-                <display-name xml:lang="x-default">session_url</display-name>
+            <attribute-definition attribute-id="komojuSessionUrl">
+                <display-name xml:lang="x-default">KOMOJU Session URL</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>true</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="sessionidkomoju">
-                <display-name xml:lang="x-default">sessionidkomoju</display-name>
+            <attribute-definition attribute-id="komojuSessionId">
+                <display-name xml:lang="x-default">UUID</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>true</externally-managed-flag>
@@ -32,101 +25,83 @@
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
-            <attribute-group group-id="komoju_group">
-                <display-name xml:lang="x-default">komojugroup</display-name>
-                <attribute attribute-id="count"/>
+            <attribute-group group-id="komojuGroup">
+                <display-name xml:lang="x-default">KOMOJU Group</display-name>
                 <attribute attribute-id="komojuPaymentMethodType"/>
-                <attribute attribute-id="session_url"/>
-                <attribute attribute-id="sessionidkomoju"/>
+                <attribute attribute-id="komojuSessionUrl"/>
+                <attribute attribute-id="komojuSessionId"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
 
     <type-extension type-id="Order">
         <custom-attribute-definitions>
-            <attribute-definition attribute-id="count">
-                <display-name xml:lang="x-default">count</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="sessionidperma">
-                <display-name xml:lang="x-default">sessionidperma</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="done">
-                <display-name xml:lang="x-default">done</display-name>
+            <attribute-definition attribute-id="komojuOrderProcessed">
+                <display-name xml:lang="x-default">KOMOJU Order Processed</display-name>
                 <type>boolean</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="komojuPaymentMethodType">
-                <display-name xml:lang="x-default">komojuPaymentMethodType</display-name>
+                <display-name xml:lang="x-default">KOMOJU Payment Method Type</display-name>
                 <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuExchangeRate">
+                <display-name xml:lang="x-default">KOMOJU Exchange Rate</display-name>
+                <type>double</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="komojuRefundResponse">
-                <display-name xml:lang="x-default">komojuRefundResponse</display-name>
+                <display-name xml:lang="x-default">KOMOJU Refund Response</display-name>
                 <type>text</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
             <attribute-definition attribute-id="komojuCancelResponse">
-                <display-name xml:lang="x-default">komojuCancelResponse</display-name>
+                <display-name xml:lang="x-default">KOMOJU Cancel Response</display-name>
                 <type>text</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
             </attribute-definition>
-            <attribute-definition attribute-id="paymentidkomoju">
-                <display-name xml:lang="x-default">paymentidkomoju</display-name>
+            <attribute-definition attribute-id="komojuPaymentId">
+                <display-name xml:lang="x-default">KOMOJU Payment Id</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="refunded">
-                <display-name xml:lang="x-default">refunded</display-name>
-                <type>boolean</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>true</externally-managed-flag>
-            </attribute-definition>
-            <attribute-definition attribute-id="session_url">
-                <display-name xml:lang="x-default">session_url</display-name>
+            <attribute-definition attribute-id="komojuSessionUrl">
+                <display-name xml:lang="x-default">KOMOJU Session URL</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="sessionidkomoju">
-                <display-name xml:lang="x-default">sessionidkomoju</display-name>
+            <attribute-definition attribute-id="komojuSessionId">
+                <display-name xml:lang="x-default">UUID</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="komojuRefundStatus">
-                <display-name xml:lang="x-default">komojuRefundStatus</display-name>
+                <display-name xml:lang="x-default">KOMOJU Refund Status</display-name>
                 <type>enum-of-string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <value-definitions>
                     <value-definition>
-                        <display xml:lang="x-default">Requested</display>
-                        <value>Requested</value>
-                    </value-definition>
-                    <value-definition>
-                        <display xml:lang="x-default">Initiated</display>
-                        <value>Initiated</value>
-                    </value-definition>
-                    <value-definition>
                         <display xml:lang="x-default">Failed</display>
                         <value>Failed</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Rejected</display>
+                        <value>Rejected</value>
                     </value-definition>
                     <value-definition>
                         <display xml:lang="x-default">Refunded</display>
@@ -135,22 +110,18 @@
                 </value-definitions>
             </attribute-definition>
             <attribute-definition attribute-id="komojuCancelStatus">
-                <display-name xml:lang="x-default">komojuCancelStatus</display-name>
+                <display-name xml:lang="x-default">KOMOJU Cancel Status</display-name>
                 <type>enum-of-string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <value-definitions>
                     <value-definition>
-                        <display xml:lang="x-default">Requested</display>
-                        <value>Requested</value>
-                    </value-definition>
-                    <value-definition>
-                        <display xml:lang="x-default">Initiated</display>
-                        <value>Initiated</value>
-                    </value-definition>
-                    <value-definition>
                         <display xml:lang="x-default">Failed</display>
                         <value>Failed</value>
+                    </value-definition>
+                    <value-definition>
+                        <display xml:lang="x-default">Rejected</display>
+                        <value>Rejected</value>
                     </value-definition>
                     <value-definition>
                         <display xml:lang="x-default">Cancelled</display>
@@ -160,90 +131,88 @@
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
-            <attribute-group group-id="komoju_group">
-                <display-name xml:lang="x-default">komojugroup</display-name>
-                <attribute attribute-id="count"/>
-                <attribute attribute-id="done"/>
+            <attribute-group group-id="komojuGroup">
+                <display-name xml:lang="x-default">KOMOJU Group</display-name>
+                <attribute attribute-id="komojuOrderProcessed"/>
                 <attribute attribute-id="komojuPaymentMethodType"/>
-                <attribute attribute-id="session_url"/>
-                <attribute attribute-id="paymentidkomoju"/>
-                <attribute attribute-id="sessionidkomoju"/>
-                <attribute attribute-id="sessionidperma"/>
+                <attribute attribute-id="komojuSessionUrl"/>
+                <attribute attribute-id="komojuPaymentId"/>
+                <attribute attribute-id="komojuSessionId"/>
                 <attribute attribute-id="komojuRefundResponse"/>
                 <attribute attribute-id="komojuCancelResponse"/>
                 <attribute attribute-id="komojuRefundStatus"/>
                 <attribute attribute-id="komojuCancelStatus"/>
-                <attribute attribute-id="refunded"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
 
     <type-extension type-id="OrderPaymentInstrument">
         <custom-attribute-definitions>
-            <attribute-definition attribute-id="account_number">
-                <display-name xml:lang="x-default">account_number</display-name>
+            <attribute-definition attribute-id="transactionStatus">
+                <display-name xml:lang="x-default">Transaction Status</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="account_type">
-                <display-name xml:lang="x-default">account_type</display-name>
+            <attribute-definition attribute-id="komojuPaymentId">
+                <display-name xml:lang="x-default">KOMOJU Payment Id</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="bank_name">
-                <display-name xml:lang="x-default">bank_name</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="brand">
-                <display-name xml:lang="x-default">brand</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="order_id">
-                <display-name xml:lang="x-default">order_id</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="payment_method">
-                <display-name xml:lang="x-default">payment_method</display-name>
-                <type>string</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-                <min-length>0</min-length>
-            </attribute-definition>
-            <attribute-definition attribute-id="payment_method_bank">
+            <attribute-definition attribute-id="komojuPaymentMethodType">
+                <display-name xml:lang="x-default">KOMOJU Payment Method Type</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="store">
-                <display-name xml:lang="x-default">store</display-name>
+                <display-name xml:lang="x-default">KOMOJU Payment Method Sub Type</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="prepaid_card_last_digits">
-                <display-name xml:lang="x-default">prepaid_card_last_digits</display-name>
+            <attribute-definition attribute-id="brand">
+                <display-name xml:lang="x-default">Brand</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
-            <attribute-definition attribute-id="transaction_status">
-                <display-name xml:lang="x-default">transaction_status</display-name>
+            <attribute-definition attribute-id="prepaidCardLastDigits">
+                <display-name xml:lang="x-default">Prepaid Card Last Digits</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuProcessingCurrency">
+                <display-name xml:lang="x-default">KOMOJU Processing Currency</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuProcessingFee">
+                <display-name xml:lang="x-default">KOMOJU Processing Fee</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuExchangeRate">
+                <display-name xml:lang="x-default">KOMOJU Exchange Rate</display-name>
+                <type>string</type>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+                <min-length>0</min-length>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuExchangeAmount">
+                <display-name xml:lang="x-default">KOMOJU Exchange Amount</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -251,40 +220,21 @@
             </attribute-definition>
         </custom-attribute-definitions>
         <group-definitions>
-            <attribute-group group-id="bank_transaction">
-                <display-name xml:lang="x-default">bank_transaction</display-name>
-                <attribute attribute-id="bank_name"/>
-                <attribute attribute-id="account_number"/>
-                <attribute attribute-id="account_type"/>
-                <attribute attribute-id="order_id"/>
-                <attribute attribute-id="payment_method_bank"/>
-            </attribute-group>
-            <attribute-group group-id="komoju_transaction">
-                <display-name xml:lang="x-default">komoju_transaction</display-name>
-                <attribute attribute-id="payment_method"/>
-                <attribute attribute-id="prepaid_card_last_digits"/>
-                <attribute attribute-id="brand"/>
+            <attribute-group group-id="komojuTransaction">
+                <display-name xml:lang="x-default">KOMOJU Transaction</display-name>
+                <attribute attribute-id="transactionStatus"/>
+                <attribute attribute-id="komojuPaymentId"/>
+                <attribute attribute-id="komojuPaymentMethodType"/>
                 <attribute attribute-id="store"/>
-                <attribute attribute-id="transaction_status"/>
+                <attribute attribute-id="brand"/>
+                <attribute attribute-id="prepaidCardLastDigits"/>
+                <attribute attribute-id="komojuProcessingCurrency"/>
+                <attribute attribute-id="komojuProcessingFee"/>
+                <attribute attribute-id="komojuExchangeRate"/>
+                <attribute attribute-id="komojuExchangeAmount"/>
             </attribute-group>
         </group-definitions>
     </type-extension>
 
-    <type-extension type-id="SitePreferences">
-        <custom-attribute-definitions>
-          <attribute-definition attribute-id="availablePaymentMethods">
-                <display-name xml:lang="x-default">availablePaymentMethods</display-name>
-                <type>text</type>
-                <mandatory-flag>false</mandatory-flag>
-                <externally-managed-flag>false</externally-managed-flag>
-            </attribute-definition>
-        </custom-attribute-definitions>
-        <group-definitions>
-            <attribute-group group-id="komojupaymentgrouping">
-                <display-name xml:lang="x-default">komojupaymentmethodgrouping</display-name>
-                <attribute attribute-id="availablePaymentMethods"/>
-            </attribute-group>
-        </group-definitions>
-    </type-extension>
 
 </metadata>

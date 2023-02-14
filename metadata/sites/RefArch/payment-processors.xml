@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <payment-processors xmlns="http://www.demandware.com/xml/impex/paymentprocessor/2007-03-31">
-    <payment-processor processor-id="KomojuProcessor">
+    <payment-processor processor-id="KOMOJU">
         <preferences>
             <all-instances/>
             <development/>

@@ -12,18 +12,26 @@ var Template = require('dw/util/Template');
 var Mail = require('dw/net/Mail');
 var HashMap = require('dw/util/HashMap');
 var Order = require('dw/order/Order');
-
+var Resource = require('dw/web/Resource');
 /**
  * sendCancelErrorEmail : to send the email to merchant containing the orders which are not updated
  * @param {Object} ordersWhichAreNotUpdated contains the orders
  */
 function sendCancelErrorEmail(ordersWhichAreNotUpdated) {
+    var emailLocale = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.komojuEmailLocale;
     var template = new Template('cancelAndRefundTemplate');
     let toEmail = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.komojuEmail;
+    var emailHead;
+    if (emailLocale === 'ja') {
+        emailHead = Resource.msg('email.heading.cancelKomoju', 'cancelAndRefundTemplate_ja_JP', null);
+    } else {
+        emailHead = Resource.msg('email.heading.cancelKomoju', 'cancelAndRefundTemplate', null);
+    }
 
     var mailAttributes = new HashMap();
     mailAttributes.put('allFailedOrders', ordersWhichAreNotUpdated);
     mailAttributes.put('jobProcess', 'Cancel');
+    mailAttributes.put('emailLocale', emailLocale);
 
 
     var content = template.render(mailAttributes);
@@ -31,7 +39,7 @@ function sendCancelErrorEmail(ordersWhichAreNotUpdated) {
     var mail = new Mail();
     mail.addTo(toEmail);
     mail.setFrom('abcd@xyz.com');
-    mail.setSubject('KOMOJU Cancel Orders Error');
+    mail.setSubject(emailHead);
     mail.setContent(content);
 
     mail.send();

@@ -11,6 +11,7 @@ var Mail = require('dw/net/Mail');
 var CustomObjectMgr = require('dw/object/CustomObjectMgr');
 var Template = require('dw/util/Template');
 var HashMap = require('dw/util/HashMap');
+var Resource = require('dw/web/Resource');
 
 
 /**
@@ -20,10 +21,17 @@ var HashMap = require('dw/util/HashMap');
 function sendRefundErrorEmail(ordersWhichAreNotUpdated) {
     var template = new Template('cancelAndRefundTemplate');
     let toEmail = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.komojuEmail;
-
+    var emailLocale = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.komojuEmailLocale;
     var mailAttributes = new HashMap();
+    var emailHead;
+    if (emailLocale === 'ja') {
+        emailHead = Resource.msg('email.heading.refundKomoju', 'cancelAndRefundTemplate_ja_JP', null);
+    } else {
+        emailHead = Resource.msg('email.heading.refundKomoju', 'cancelAndRefundTemplate', null);
+    }
     mailAttributes.put('allFailedOrders', ordersWhichAreNotUpdated);
     mailAttributes.put('jobProcess', 'Refund');
+    mailAttributes.put('emailLocale', emailLocale);
 
 
     var content = template.render(mailAttributes);
@@ -31,7 +39,7 @@ function sendRefundErrorEmail(ordersWhichAreNotUpdated) {
     var mail = new Mail();
     mail.addTo(toEmail);
     mail.setFrom('abcd@xyz.com');
-    mail.setSubject('KOMOJU Refund Orders Error');
+    mail.setSubject(emailHead);
     mail.setContent(content);
 
     mail.send();

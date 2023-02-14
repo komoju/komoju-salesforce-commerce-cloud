@@ -13,6 +13,7 @@
 
     <menuaction id="komojuPaymentSettings" menupath="orders" position="100" site="true">
         <name xml:lang="x-default">KOMOJU Payment Settings</name>
+        <name xml:lang="ja">KOMOJU Payment設定</name>
         <short_description xml:lang="x-default">This extension allows a merchant to enable or disable KOMOJU payment methods.</short_description>
         <description xml:lang="x-default">This extension allows a merchant to enable or disable KOMOJU payment methods.</description>
         <!-- no icon specified -->

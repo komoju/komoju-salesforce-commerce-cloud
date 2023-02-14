@@ -5,10 +5,21 @@
  * executes when merchant clicks on komoju payment settings menuaction and renders the toggle page
  */
 function start() {
+    var currentLocale = request.locale;
     var CustomObjectMgr = require('dw/object/CustomObjectMgr');
+    var Transaction = require('dw/system/Transaction');
+    var Logger = require('dw/system/Logger');
+    if (CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1)) {
+        try {
+            Transaction.wrap(function () {
+                CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.komojuEmailLocale = currentLocale;
+            });
+        } catch (e) {
+            Logger.error('The custom object type komojuPaymentMethodsObjectType and custom attribute komojuEmailLocale or the object instance was not found');
+        }
+    }
     var renderHelper = require('../scripts/helpers/renderHelper');
     var Site = require('dw/system/Site');
-    var Logger = require('dw/system/Logger');
 
     var komojuPaymentMethodsFromCustomObjectType;
     try {
@@ -60,7 +71,6 @@ function start() {
 
 
     renderHelper.render('komojuPaymentMethodsList', {
-        title: 'KOMOJU Payment Settings',
         CurrentMenuItemId: 'Ordering',
         komojuSecretKey: komojuSecretKey,
         komojuEmail: komojuEmail,
@@ -71,7 +81,8 @@ function start() {
         currentSiteID: currentSiteID,
         komojuWebhooksAsList: komojuWebhooksAsList,
         komojuAllDataToBeSent: komojuAllDataToBeSent,
-        komojuMetaDataAvailable: komojuMetaDataAvailable
+        komojuMetaDataAvailable: komojuMetaDataAvailable,
+        currentLocale: currentLocale
     });
 }
 

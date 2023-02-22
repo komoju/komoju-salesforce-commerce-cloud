@@ -15,7 +15,7 @@ const oredermodal = require('../mocks/order').Order;
 const basketemodal = require('../mocks/basket.js').basket;
 var proxyquire = require('proxyquire').noCallThru();
 var komoju = proxyquire(
-    '../../cartridges/int_komoju/cartridge/controllers/KomojuController', {
+    '../../cartridges/int_komoju_sfra/cartridge/controllers/KomojuController', {
         server: { get: function () {},
             post: function () {},
             middleware: { https: '' },
@@ -102,7 +102,7 @@ var komoju = proxyquire(
                 return { error: false };
             },
             undoFail: function () { return { error: false }; },
-            deletebasketifpresent: function () {
+            deleteBasketIfPresent: function () {
                 return { error: false };
             }
         },

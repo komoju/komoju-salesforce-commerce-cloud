@@ -1,8 +1,8 @@
-var _super = require('./ExtensibleObject');
+var SuperPrototype = require('./ExtensibleObject');
 
 var Shipment = function () {};
 
-Shipment.prototype = new _super();
+Shipment.prototype = new SuperPrototype();
 
 Shipment.prototype.getID = function () {};
 Shipment.prototype.getProductLineItems = function () {};

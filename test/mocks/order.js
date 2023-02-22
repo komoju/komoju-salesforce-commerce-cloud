@@ -5,7 +5,7 @@ class Order {
         this.getPaymentInstruments = function () {
             var array = [];
             var obj = {};
-            obj.custom = { payment_method: null, transaction_status: null, brand: null, bank_name: null, order_id: null, account_type: null, account_number: null };
+            obj.custom = { paymentMethod: null, transactionStatus: null, brand: null };
             obj.setCreditCardType = function () { return true; };
             obj.setCreditCardNumber = function () { return true; };
             obj.setCreditCardExpirationMonth = function () { return true; };
@@ -17,7 +17,7 @@ class Order {
 
         this.removePaymentInstrument = function () { };
         this.createPaymentInstrument = function () { };
-        this.custom = function () { return { done: 'null', sessionidkomoju: 's', session_url: 'sad' }; };
+        this.custom = function () { return { komojuOrderProcessed: 'null', sessionIdKomoju: 's', sessionUrlKomoju: 'sad' }; };
         this.getOrderNo = function () { };
         this.getExportStatus = function () { return null; };
         this.getCreatedBy = function () { };

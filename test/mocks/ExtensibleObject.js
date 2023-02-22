@@ -1,8 +1,8 @@
-var _super = require('./PersistentObject');
+var SuperPrototype = require('./PersistentObject');
 
 var ExtensibleObject = function () {};
 
-ExtensibleObject.prototype = new _super();
+ExtensibleObject.prototype = new SuperPrototype();
 
 ExtensibleObject.prototype.describe = function () {};
 ExtensibleObject.prototype.getCustom = function () { return this.custom; };

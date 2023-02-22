@@ -1,8 +1,8 @@
-var _super = require('./ExtensibleObject');
+var SuperPrototype = require('./ExtensibleObject');
 
 var LineItemCtnr = function () {};
 
-LineItemCtnr.prototype = new _super();
+LineItemCtnr.prototype = new SuperPrototype();
 
 LineItemCtnr.prototype.createBillingAddress = function () {};
 LineItemCtnr.prototype.getCurrencyCode = function () {};

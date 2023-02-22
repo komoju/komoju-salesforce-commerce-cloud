@@ -1,10 +1,10 @@
 
 'use strict';
 
-var _super = require('./LineItemCtnr');
+var SuperPrototype = require('./LineItemCtnr');
 
 var Basket = function () {};
-Basket.prototype = new _super();
+Basket.prototype = new SuperPrototype();
 Basket.prototype.getOrderBeingEdited = function () {};
 Basket.prototype.getOrderNoBeingEdited = function () {};
 Basket.prototype.orderBeingEdited = null;

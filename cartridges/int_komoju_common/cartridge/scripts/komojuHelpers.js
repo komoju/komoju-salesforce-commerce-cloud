@@ -49,9 +49,9 @@ function setInstrumentFromAuthorizeWebHook(webHookResponse, order) {
             paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
             paymentInstrument.custom.komojuPaymentId = webHookResponse.data.id;
             paymentInstrument.custom.komojuExchangeRate = order.custom.komojuExchangeRate;
-            paymentInstrument.custom.komojuProcessingFee = parseFloat((webHookResponse.data.payment_method_fee).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            paymentInstrument.custom.komojuProcessingFee = paymentMethodCurrencySymbol + ' ' + parseFloat((webHookResponse.data.payment_method_fee).toFixed(2));
             paymentInstrument.custom.komojuProcessingCurrency = webHookResponse.data.currency;
-            paymentInstrument.custom.komojuExchangeAmount = parseFloat((webHookResponse.data.amount).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            paymentInstrument.custom.komojuExchangeAmount = paymentMethodCurrencySymbol + ' ' + parseFloat((webHookResponse.data.amount).toFixed(2));
         });
         switch (paymentMethod) {
             case 'konbini':
@@ -89,12 +89,12 @@ function setinstruments(komojuServiceGetResponseResult, order) {
             paymentInstrument.custom.komojuPaymentMethodType = paymentMethod;
             paymentInstrument.custom.komojuPaymentId = komojuServiceGetResponseResult.object.payment.id;
             paymentInstrument.custom.komojuExchangeRate = order.custom.komojuExchangeRate;
-            paymentInstrument.custom.komojuProcessingFee = parseFloat((komojuServiceGetResponseResult.object.payment.payment_method_fee).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+            paymentInstrument.custom.komojuProcessingFee = paymentMethodCurrencySymbol + ' ' + parseFloat((komojuServiceGetResponseResult.object.payment.payment_method_fee).toFixed(2));
             paymentInstrument.custom.komojuProcessingCurrency = komojuServiceGetResponseResult.object.payment.currency;
             if (komojuServiceGetResponseResult.object.currency === 'USD' || komojuServiceGetResponseResult.object.currency === 'EUR') {
-                paymentInstrument.custom.komojuExchangeAmount = parseFloat((order.custom.komojuExchangeRate * ((komojuServiceGetResponseResult.object.amount) / 100)).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+                paymentInstrument.custom.komojuExchangeAmount = paymentMethodCurrencySymbol + ' ' + parseFloat((order.custom.komojuExchangeRate * ((komojuServiceGetResponseResult.object.amount) / 100)).toFixed(2));
             } else {
-                paymentInstrument.custom.komojuExchangeAmount = parseFloat((order.custom.komojuExchangeRate * (komojuServiceGetResponseResult.object.amount)).toFixed(2)) + ' ' + paymentMethodCurrencySymbol;
+                paymentInstrument.custom.komojuExchangeAmount = paymentMethodCurrencySymbol + ' ' + parseFloat((order.custom.komojuExchangeRate * (komojuServiceGetResponseResult.object.amount)).toFixed(2));
             }
         });
         switch (paymentMethod) {

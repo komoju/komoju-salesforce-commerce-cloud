@@ -8,21 +8,15 @@ module.exports = [{
   name: 'js',
   entry: sgmfScripts.createJsPath(),
   output: {
-    path: path.resolve('./cartridges/int_komoju/cartridge/static'),
+    path: path.resolve('./cartridges/int_komoju_sfra/cartridge/static'),
     filename: '[name].js'
-  },
-  plugins: [
-    new CopyPlugin({ patterns: [{
-      from: path.resolve('./cartridges/int_komoju/cartridge/client/default/images'),
-      to: path.resolve('./cartridges/int_komoju/cartridge/static/default/images')
-    }] })
-  ]
+  }
 }, {
   mode: 'none',
   name: 'scss',
   entry: sgmfScripts.createScssPath(),
   output: {
-    path: path.resolve('./cartridges/int_komoju/cartridge/static'),
+    path: path.resolve('./cartridges/int_komoju_sfra/cartridge/static'),
     filename: '[name].css'
   },
   module: {

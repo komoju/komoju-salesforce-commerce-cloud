@@ -1,5 +1,4 @@
-
-/* eslint-disable no-undef */
+/* global describe,it a*/
 
 const chai = require('chai');
 const request = require('request-promise');
@@ -69,4 +68,3 @@ describe('submitshippng', function () {
         });
     });
 });
-

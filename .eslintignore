@@ -4,7 +4,7 @@ cartridges/modules/
 coverage/**
 cartridges/app_storefront_base
 
-# cartridges/int_komoju/**
+# cartridges/int_komoju_sfra/**
 webpack.config.js
 cartridges/bm_app_storefront_base/
 cartridges/bm_app_storefront_base/cartridge/static/

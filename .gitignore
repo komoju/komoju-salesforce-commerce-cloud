@@ -3,7 +3,7 @@ modules/
 coverage/
 app_storefront_base/
 bm_app_storefront_base/
-static/
 .vscode/
+cartridges/int_komoju_sfra/cartridge/static/
 package-lock.json
 dw.json

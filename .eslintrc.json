@@ -43,7 +43,10 @@
         "no-continue": "off",
         "no-underscore-dangle": "off",
         "no-param-reassign": "off",
-        "one-var": "off",
-        "linebreak-style": ["off", "unix"]
+        "linebreak-style":0,
+        "no-var": "off",
+        "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
+        "no-trailing-spaces": "error",
+        "no-unused-vars": "error"
     }
 }

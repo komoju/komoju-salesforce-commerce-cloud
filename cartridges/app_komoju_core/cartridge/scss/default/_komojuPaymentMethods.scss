@@ -1,0 +1,19 @@
+.btn-group {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.he {
+    width: 9rem;
+    text-align: center;
+}
+
+.labelpay {
+    display: flex;
+    align-items: center;
+}
+
+#methodNotSupported{
+    display: none;
+}

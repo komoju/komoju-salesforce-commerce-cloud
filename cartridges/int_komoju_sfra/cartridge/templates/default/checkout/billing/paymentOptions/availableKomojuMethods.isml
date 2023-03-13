@@ -5,23 +5,20 @@
         assets.addCss('/css/availableKomojuMethods.css');
 </isscript>
 <form>
-    <div class="emt pl-4">
+    <div class="emt">
     <isif condition="${pdict.allpaymentmethod.length!=0}">
-        <p  class="line-item-name">${Resource.msg('select.payment.method', 'komojuPayment', null)}</p><br>
         <div class="btn-group">
             <isloop items="${pdict.allpaymentmethod}" var="method" status="loopstate">
                 <div class="labelpay">
                     <input type="radio" class="btn-check" name="options" id="${method.ID}" value="${method.ID}" display-name = "${method.displayName}"
                         autocomplete="off" ${loopstate.first?'checked':''} />
                     <label class="methodSvg" for="${method.ID}">
-                        <img class="credit-card-option" src="https://komoju.com/payment_methods/${method.ID}.svg"
-                            width="100" height="45" alt="Komoju Payment" title="Komoju Payment"/> </label>
                     <div class="he">
                        <isprint value="${method.displayName}" encoding="on" />
-                    </div>
-                    <div class="he">
                        <isprint value="${method.currency}" encoding="on" />
                     </div>
+                        <img class="credit-card-option komojuPaymentImage" src="https://komoju.com/payment_methods/${method.ID}.svg?brands=${method.subTypes}"
+                          alt="Komoju Payment" title="Komoju Payment"/> </label>
 
                     <div class="modal fade" id="${method.ID}1" tabindex="-1" role="dialog"
                         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

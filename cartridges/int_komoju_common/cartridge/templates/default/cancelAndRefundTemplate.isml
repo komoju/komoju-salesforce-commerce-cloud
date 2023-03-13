@@ -8,13 +8,13 @@
     <style>
         th,
         td {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 0.0625rem solid #ddd;
         }
 
         .universal {
             width: 80%;
             background-color: lightgray;
-            padding: 15px;
+            padding: 0.9375rem;
         }
 
         .headings {

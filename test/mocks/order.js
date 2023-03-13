@@ -5,7 +5,7 @@ class Order {
         this.getPaymentInstruments = function () {
             var array = [];
             var obj = {};
-            obj.custom = { paymentMethod: null, transactionStatus: null, brand: null };
+            obj.custom = { komojuPaymentMethodType: null, paymentMethod: null, transactionStatus: null, brand: null, komojuProcessingCurrency: null, komojuProcessingFee: null, komojuExchangeRate: null, komojuPaymentId: null, komojuExchangeAmount: null };
             obj.setCreditCardType = function () { return true; };
             obj.setCreditCardNumber = function () { return true; };
             obj.setCreditCardExpirationMonth = function () { return true; };

@@ -2,11 +2,11 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 62px;
-  height: 32px;
+  width: 3.875rem;
+  height: 2rem;
   display: inline-block;
   position: relative;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   overflow: hidden;
   outline: none;
   border: none;
@@ -21,21 +21,21 @@
   display: block;
   position: absolute;
   z-index: 2;
-  width: 28px;
-  height: 28px;
+  width: 1.75rem;
+  height: 1.75rem;
   background: #fff;
-  left: 2px;
-  top: 2px;
+  left: 0.125rem;
+  top: 0.125rem;
   border-radius: 50%;
-  font: 10px/28px Helvetica;
+  font: 0.625rem/1.75rem Helvetica;
   text-transform: uppercase;
   font-weight: bold;
-  text-indent: -22px;
-  word-spacing: 37px;
+  text-indent: -1.375rem;
+  word-spacing: 2.3125rem;
   color: #fff;
-  text-shadow: -1px -1px rgba(0, 0, 0, 0.15);
+  text-shadow: -0.0625rem -0.0625rem rgba(0, 0, 0, 0.15);
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
   transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
 }
 
@@ -44,15 +44,15 @@
 }
 
 .toggle:checked:before {
-  left: 32px;
+  left: 2rem;
 }
 
 .paymentMethodName {
-  width: 30% !important;
+  width: 45% !important;
 }
 .paymentHeading {
   width: 100%;
-  font-size: 18px;
+  font-size: 1.125rem;
 }
 
 .fillAvailable {
@@ -72,10 +72,10 @@
 }
 
 .inputText {
-  border-radius: 3px;
-  border: 1px solid #4cd964;
-  padding: 5px 5px;
-  font-size: 17px;
+  border-radius: 0.1875rem;
+  border: 0.0625rem solid #4cd964;
+  padding: 0.3125rem 0.3125rem;
+  font-size: 1.0625rem;
 }
 
 .webhookEvent {
@@ -83,10 +83,10 @@
 }
 
 .updateBtn {
-  font-size: 14px;
-  border-radius: 3px;
-  border: 1px solid #4cd964;;
-  padding: 7px 9px;
+  font-size: 0.875rem;
+  border-radius: 0.1875rem;
+  border: 0.0625rem solid #4cd964;;
+  padding: 0.4375rem 0.5625rem;
   color: white;
   cursor: pointer;
   background-color: #4cd964;
@@ -104,30 +104,48 @@
   left: -50%;
   background-color: #4cd964;
   color: white;
-  font-size: 14px;
+  font-size: 0.875rem;
   margin: 1em auto;
   width: fit-content;
 }
 
 .selected {
   width: 80% !important;
+  height:3.125rem !important;
   display: flex;
   flex-direction: row;
-  border: 3px solid #93da8b;
+  border: 0.1875rem solid #93da8b;
   box-sizing: border-box;
-  padding-top:5px;
+  padding-top:0.3125rem;
+  align-items: center;
 }
 .toggleButton {
   text-align: right !important;
-  width:61% !important;
+  width:10% !important;
+  padding-top: 0.1rem !important;
 }
-.imageName {
-  width: 31% !important;
+.dragNameCurrency {
+  width:45% !important;
+  padding-left: 0.8rem !important;
 }
-.paymentMethod {
-  padding-bottom:10px;
-  padding-top:5px;
-}
+
 .menuIcon {
-  width:50px;
+  width:3.125rem;
+}
+.paymentMethodTypeImage{
+  height: 1.875rem !important;
+  margin-left: 0.9375rem !important;
+}
+
+.dragMethodImage{
+  text-align: left !important;
+  width: 39% !important;
+}
+
+ #methodTable{
+  border-collapse: separate;
+  border-spacing: 0rem 1.5em;
+}
+span.inputTitle.currencyText {
+  padding-left: 1.25rem;
 }

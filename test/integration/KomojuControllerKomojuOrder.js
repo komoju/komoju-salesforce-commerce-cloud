@@ -13,6 +13,7 @@ const sinon = require('sinon');
 chai.use(chaiSubset);
 const oredermodal = require('../mocks/order').Order;
 const basketemodal = require('../mocks/basket.js').basket;
+var Logger = require('../mocks/logger');
 var proxyquire = require('proxyquire').noCallThru();
 var komoju = proxyquire(
     '../../cartridges/int_komoju_sfra/cartridge/controllers/KomojuController', {
@@ -21,6 +22,11 @@ var komoju = proxyquire(
             middleware: { https: '' },
             exports: function () {} },
         'dw/web/URLUtils': sinon.spy(),
+        '*/cartridge/scripts/fetchDisplayName': {
+            fetchDisplayName: function () {
+                return 'Konbini';
+            }
+        },
         '*/cartridge/scripts/middleware/csrf': sinon.spy(),
         '*/cartridge/scripts/middleware/userLoggedIn': sinon.spy,
         '*/cartridge/scripts/middleware/consentTracking': sinon.spy(),
@@ -37,6 +43,7 @@ var komoju = proxyquire(
                 return oredermodal;
             }
         },
+        'dw/system/Logger': new Logger(),
         'dw/system/Session': sinon.spy(),
         'dw/system/Transaction': sinon.spy(),
         '*/cartridge/scripts/services/komojuServiceCreateSession': {
@@ -101,10 +108,7 @@ var komoju = proxyquire(
             cancelOrder: function () {
                 return { error: false };
             },
-            undoFail: function () { return { error: false }; },
-            deleteBasketIfPresent: function () {
-                return { error: false };
-            }
+            undoFail: function () { return { error: false }; }
         },
         'dw/order/BasketMgr': { getCurrentBasket: function () {
         // sinon.spy();

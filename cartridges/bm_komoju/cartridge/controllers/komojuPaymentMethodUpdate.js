@@ -7,7 +7,7 @@ var Logger = require('dw/system/Logger');
  *
  * */
 function updateAvailableMethods() {
-    var x = request.httpParameterMap;
+    var updatedKomojuMethod = request.httpParameterMap;
 
     var komojuPaymentMethods = CustomObjectMgr.getCustomObject('komojuPaymentMethodsObjectType', 1).custom.availableKomojuPaymentMethods;
     var komojuPaymentMethodsParsed = JSON.parse(komojuPaymentMethods);
@@ -17,8 +17,8 @@ function updateAvailableMethods() {
         var currentMethod = allKomojuPaymentMethods[key];
         Object.keys(currentMethod).forEach(function (method) {
             var currentMethodData = currentMethod[method];
-            if (currentMethodData.id === x.komojuPaymentMethodId.value) {
-                if (x.checked.value === 'true') {
+            if (currentMethodData.id === updatedKomojuMethod.komojuPaymentMethodId.value && currentMethodData.currency === updatedKomojuMethod.currency.value) {
+                if (updatedKomojuMethod.checked.value === 'true') {
                     currentMethodData.enabled = true;
                 } else {
                     currentMethodData.enabled = false;

@@ -33,6 +33,7 @@ function CancelSession(body) {
  * Set payment instrument for authorize payment status
  * @param {Object} webHookResponse Authorize webhook response
  * @param {Object} order Current placed Order
+ * @returns {Object} a boolean
  */
 function setInstrumentFromAuthorizeWebHook(webHookResponse, order) {
     var paymentMethod = webHookResponse.data.payment_details.type;
@@ -65,6 +66,7 @@ function setInstrumentFromAuthorizeWebHook(webHookResponse, order) {
     } catch (e) {
         Logger.error('error in transaction for setting payment instrument in the komjuHelper file' + e.fileName + ':' + e.lineNumber);
     }
+    return true;
 }
 
 /**
@@ -78,6 +80,13 @@ function setinstruments(komojuServiceGetResponseResult, order) {
     var paymentMethod = komojuServiceGetResponseResult.object.payment.payment_details.type;
     var paymentInstruments = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
     var paymentInstrument;
+    var noCentCurrency = [
+        'DIF', 'CLP', 'BIF',
+        'GNF', 'JPY', 'KMF',
+        'KRW', 'MGA', 'PYG',
+        'RWF', 'UGX', 'VND',
+        'VUV', 'XAF', 'XOF',
+        'XPF'];
     try {
         Transaction.wrap(function () {
             Object.keys(paymentInstruments).forEach(function (item) {
@@ -91,10 +100,10 @@ function setinstruments(komojuServiceGetResponseResult, order) {
             paymentInstrument.custom.komojuExchangeRate = order.custom.komojuExchangeRate;
             paymentInstrument.custom.komojuProcessingFee = paymentMethodCurrencySymbol + ' ' + parseFloat((komojuServiceGetResponseResult.object.payment.payment_method_fee).toFixed(2));
             paymentInstrument.custom.komojuProcessingCurrency = komojuServiceGetResponseResult.object.payment.currency;
-            if (komojuServiceGetResponseResult.object.currency === 'USD' || komojuServiceGetResponseResult.object.currency === 'EUR') {
-                paymentInstrument.custom.komojuExchangeAmount = paymentMethodCurrencySymbol + ' ' + parseFloat((order.custom.komojuExchangeRate * ((komojuServiceGetResponseResult.object.amount) / 100)).toFixed(2));
-            } else {
+            if (noCentCurrency.includes(komojuServiceGetResponseResult.object.currency)) {
                 paymentInstrument.custom.komojuExchangeAmount = paymentMethodCurrencySymbol + ' ' + parseFloat((order.custom.komojuExchangeRate * (komojuServiceGetResponseResult.object.amount)).toFixed(2));
+            } else {
+                paymentInstrument.custom.komojuExchangeAmount = paymentMethodCurrencySymbol + ' ' + parseFloat((order.custom.komojuExchangeRate * ((komojuServiceGetResponseResult.object.amount) / 100)).toFixed(2));
             }
         });
         switch (paymentMethod) {
@@ -122,12 +131,20 @@ function setinstruments(komojuServiceGetResponseResult, order) {
                 break;
             case 'web_money':
                 Transaction.wrap(function () {
-                    if (komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0] !== undefined) { paymentInstrument.custom.prepaidCardLastDigits = komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0].last_four_digits; }
+                    if (komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0] !== undefined) {
+                        paymentInstrument.custom.prepaidCardLastDigits = komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0].last_four_digits;
+                    } else {
+                        Logger.warn('Prepaid Card is not defined in Web Money Payment Method');
+                    }
                 });
                 break;
             case 'net_cash':
                 Transaction.wrap(function () {
-                    if (komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0] !== undefined) { paymentInstrument.custom.prepaidCardLastDigits = komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0].last_four_digits; }
+                    if (komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0] !== undefined) {
+                        paymentInstrument.custom.prepaidCardLastDigits = komojuServiceGetResponseResult.object.payment.payment_details.prepaid_cards[0].last_four_digits;
+                    } else {
+                        Logger.warn('Prepaid Card is not defined in Net cash Payment Method');
+                    }
                 });
                 break;
             default:
@@ -198,57 +215,13 @@ function undoFail(order) {
         if (FailOrderStatus === Status.ERROR) {
             result.error = true;
             throw new Error();
+        } else {
+            Logger.info('successfully undo fail order');
         }
     });
 
 
     return result;
-}
-
-/**
- * Delete the basket if present
- * @param {Object} currentBaskettemp local instance of request object
- * @returns {Object} a plain object of the current customer's account
- */
-function deleteBasketIfPresent(currentBaskettemp) {
-    var productlineitems = currentBaskettemp.getAllProductLineItems();
-    var arrayofproductlineitems = productlineitems.toArray();
-    arrayofproductlineitems.forEach(function (productitem) {
-        var uuid = productitem.getUUID();
-        var pid = productitem.getProductID();
-        var bonusProductsUUIDs = [];
-
-        Transaction.wrap(function () {
-            if (pid && uuid) {
-                var productLineItems = currentBaskettemp.getAllProductLineItems(pid);
-                var bonusProductLineItems = currentBaskettemp.bonusLineItems;
-                var mainProdItem;
-                for (var i = 0; i < productLineItems.length; i++) {
-                    var item = productLineItems[i];
-                    if ((item.UUID === uuid)) {
-                        if (bonusProductLineItems && bonusProductLineItems.length > 0) {
-                            for (var j = 0; j < bonusProductLineItems.length; j++) {
-                                var bonusItem = bonusProductLineItems[j];
-                                mainProdItem = bonusItem.getQualifyingProductLineItemForBonusProduct();
-                                if (mainProdItem !== null
-                                    && (mainProdItem.productID === item.productID)) {
-                                    bonusProductsUUIDs.push(bonusItem.UUID);
-                                }
-                            }
-                        }
-
-                        var shipmentToRemove = item.shipment;
-                        currentBaskettemp.removeProductLineItem(item);
-                        if (shipmentToRemove.productLineItems.empty && !shipmentToRemove.default) {
-                            currentBaskettemp.removeShipment(shipmentToRemove);
-                        }
-                        break;
-                    }
-                }
-            }
-        });
-    });
-    return currentBaskettemp;
 }
 /**
  * Delete the basket if present
@@ -276,6 +249,7 @@ function returnArrayOfObj() {
                 var object = higherobj[key1];
                 method.id = object.id;
                 method.enabled = object.enabled;
+                method.currency = object.currency;
                 allPaymentMethods.push(method);
             });
         });
@@ -305,6 +279,8 @@ function verifyWebhookCall(body, komojuSignature) {
     var generatedSignature = cryptoLib.Encoding.toHex(signatureDigest);
     if (generatedSignature === komojuSignature) {
         verified = true;
+    } else {
+        Logger.warn('webhook not verified');
     }
     return verified;
 }
@@ -344,7 +320,6 @@ module.exports = {
     cancelOrder: cancelOrder,
     failorder: failorder,
     undoFail: undoFail,
-    deleteBasketIfPresent: deleteBasketIfPresent,
     returnArrayOfObj: returnArrayOfObj,
     verifyWebhookCall: verifyWebhookCall,
     createOrder: createOrder

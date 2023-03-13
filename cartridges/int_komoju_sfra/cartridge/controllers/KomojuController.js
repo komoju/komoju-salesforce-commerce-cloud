@@ -118,10 +118,17 @@ server.get('geturl', function (req, res, next) {
     var UpdatedAmount;
     var currency = req.session.currency.currencyCode;
     var locale = req.locale.id;
-    if (currency === 'USD' || currency === 'EUR') {
-        UpdatedAmount = totalGrossPrice * 100;
-    } else {
+    var noCentCurrency = [
+        'DIF', 'CLP', 'BIF',
+        'GNF', 'JPY', 'KMF',
+        'KRW', 'MGA', 'PYG',
+        'RWF', 'UGX', 'VND',
+        'VUV', 'XAF', 'XOF',
+        'XPF'];
+    if (noCentCurrency.includes(currency)) {
         UpdatedAmount = totalGrossPrice;
+    } else {
+        UpdatedAmount = totalGrossPrice * 100;
     }
     if (locale.length > 2) {
         locale = locale.slice(0, 2);
@@ -142,6 +149,7 @@ server.get('geturl', function (req, res, next) {
     method = currentBasket.custom.komojuPaymentMethodType;
 
     var name = currentBasket.billingAddress.fullName;
+    var email = currentBasket.customerEmail;
     var address1 = currentBasket.shipments[0].shippingAddress.address1;
     var address2 = currentBasket.shipments[0].shippingAddress.address2;
     var postalCode = currentBasket.shipments[0].shippingAddress.postalCode;
@@ -153,6 +161,7 @@ server.get('geturl', function (req, res, next) {
         cancel_url: cancelUrl,
         amount: UpdatedAmount,
         currency: currency,
+        email: email,
         'payment_data[shipping_address][zipcode]': postalCode,
         'payment_data[shipping_address][street_address1]': address1,
         'payment_data[shipping_address][street_address2]': address2,
@@ -270,7 +279,6 @@ server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https,
     var komojuHelper = require('*/cartridge/scripts/komojuHelpers');
     var collections = require('*/cartridge/scripts/util/collections');
     var Order = require('dw/order/Order');
-    var basketCalculationHelpers = require('*/cartridge/scripts/helpers/basketCalculationHelpers');
     var result;
     var komojuServiceGetResponse = require('*/cartridge/services/komojuServiceGetResponse');
     var customKomojuSourceLogger = Logger.getLogger('customKomojuSourceLogger', 'customKomojuSourceLogger');
@@ -322,7 +330,6 @@ server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https,
     }
 
     Logger.warn(result);
-    // result = null;
     if (!result) {
         komojuHelper.failorder(
             order
@@ -458,8 +465,6 @@ server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https,
         if (order.getStatus().value === Order.ORDER_STATUS_FAILED) {
             komojuHelper.undoFail(order);
         }
-        var basketToBeDeleted = BasketMgr.getCurrentBasket();
-
         var placeOrderResult = COHelpers.placeOrder(order, fraudDetectionStatus);
         session.privacy.session_id = null;
 
@@ -468,10 +473,6 @@ server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https,
                 if (result.object.payment.status === 'captured') { order.custom.komojuOrderProcessed = true; }
             });
             session.privacy.prevTotalGrossPrice = undefined;
-        }
-        if (basketToBeDeleted != null) {
-            var deletedBasket = komojuHelper.deleteBasketIfPresent(basketToBeDeleted);
-            Transaction.wrap(function () { basketCalculationHelpers.calculateTotals(deletedBasket); });
         }
     }
 

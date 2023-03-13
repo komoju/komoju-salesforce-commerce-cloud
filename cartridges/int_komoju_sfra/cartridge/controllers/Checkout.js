@@ -86,6 +86,7 @@ server.prepend(
                     var method = {};
                     var object = currentPaymentMethod[paymentMethodKey];
                     method.ID = object.id;
+                    method.subTypes = object.subTypes;
                     method.displayName = object.displayValue[locale];
                     if (object.currency !== currency) {
                         if (currency === 'JPY') {

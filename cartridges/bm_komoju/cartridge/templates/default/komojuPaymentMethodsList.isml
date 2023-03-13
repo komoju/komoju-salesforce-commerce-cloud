@@ -38,8 +38,6 @@
 
             </tbody>
         </table>
-        <p class="emptyBlock"></p>
-
         <isif condition="${pdict.komojuMethodAvailability}">
             <table border="0" cellpadding="0" cellspacing="0" width="80%" id="methodTable"
                 class="table table-striped table-bordered table-sm">
@@ -55,23 +53,23 @@
                 <tbody>
                     <isloop items="${pdict.komojuAllDataToBeSent}" var="komojuMethod">
                         <tr class="methodList">
-                        <td> <img src="${URLUtils.staticURL('/icons/menu.png')}" alt="" width="32"
+                        <td class="paymentMethodIcon"> <img src="${URLUtils.staticURL('/icons/menu.png')}" alt="" width="32"
                         height="20"></td>
                         
 
-                            <td class="bold left flexProp paymentMethod" nowrap="nowrap" data-komoju-method-id = ${komojuMethod.id} data-komoju-method-currency = ${komojuMethod.currency}>
-                                <img class="credit-card-option"
-                                    src="https://komoju.com/payment_methods/${komojuMethod.id}.svg" width="100"
-                                    height="45" alt="Komoju Payment" title="Komoju Payment" />
+                            <td class="bold left" nowrap="nowrap" data-komoju-method-id = ${komojuMethod.id} data-komoju-method-currency = ${komojuMethod.currency}>
                                 <span class="inputTitle">${komojuMethod.name}</span>
+                                <span class="inputTitle currencyText">${komojuMethod.currency}</span>
                             </td>
 
-                            <td class="left paymentMethod">
-                                <span class="inputTitle">${komojuMethod.currency}</span>
+                            <td class="left">
+                                <img class="credit-card-option paymentMethodTypeImage"
+                                    src="https://komoju.com/payment_methods/${komojuMethod.id}.svg?brands=${komojuMethod.subTypes}"
+                             alt="Komoju Payment" title="Komoju Payment" />
                             </td>
 
-                            <td class="right paymentMethod" align="right">
-                                <input class="toggle togglePaymentMethod" id=${komojuMethod.id} type="checkbox"
+                            <td class="right" align="right">
+                                <input class="toggle togglePaymentMethod" id=${komojuMethod.id} data-currency=${komojuMethod.currency} type="checkbox"
                                     ${komojuMethod.status ? 'checked' : ''}
                                     value="${URLUtils.url('komojuPaymentMethodUpdate-updateAvailableMethods')}" />
                             </td>

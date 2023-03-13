@@ -64,6 +64,7 @@ function start() {
                 komojuMethodNameIdStatus.id = currentMethodData.id;
                 komojuMethodNameIdStatus.status = currentMethodData.enabled;
                 komojuMethodNameIdStatus.currency = currentMethodData.currency;
+                komojuMethodNameIdStatus.subTypes = currentMethodData.subTypes;
                 komojuAllDataToBeSent.push(komojuMethodNameIdStatus);
             });
         });

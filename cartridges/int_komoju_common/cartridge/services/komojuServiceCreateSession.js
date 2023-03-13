@@ -22,6 +22,7 @@ var KomojuService = LocalServiceRegistry.createService('KOMOJUService', {
         svc.setAuthentication('NONE');
         svc.addHeader('Authorization', 'Basic ' + StringUtils.encodeBase64(secretKey));
         svc.addHeader('Content-Type', 'application/x-www-form-urlencoded');
+        svc.addHeader('KOMOJU-VIA', 'salesforce');
         return formBody;
     },
     parseResponse: function (svc, httpClient) {

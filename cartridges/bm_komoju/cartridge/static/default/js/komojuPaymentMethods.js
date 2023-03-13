@@ -10,6 +10,7 @@
             let controllerUrl = this.value;
             form.komojuPaymentMethodId = this.id;
             form.checked = this.checked;
+            form.currency = $(this).attr('data-currency');
 
             $.ajax({
                 url: controllerUrl,
@@ -138,12 +139,16 @@
             dropOnEmpty: false,
             start: function (e, ui) {
                 ui.item.addClass("selected");
-                ui.item.children().eq(1).addClass("imageName");
+                ui.item.children().eq(0).addClass("iconOnDrag");
+                ui.item.children().eq(1).addClass("dragNameCurrency");
+                ui.item.children().eq(2).addClass("dragMethodImage");
                 ui.item.children().eq(3).addClass("toggleButton");
             },
             stop: function (e, ui) {
                 ui.item.removeClass("selected");
-                ui.item.children().eq(1).removeClass("imageName");
+                ui.item.children().eq(0).removeClass("iconOnDrag");
+                ui.item.children().eq(1).removeClass("dragNameCurrency");
+                ui.item.children().eq(2).removeClass("dragMethodImage");
                 ui.item.children().eq(3).removeClass("toggleButton");
                 komojuAllPaymentMethods = {};
                 $(this).find("tr").each(function (index) {

@@ -9,6 +9,7 @@ var sinon = require('sinon');
 // const Order =require('../../mocks/order').Order;
 const basketemodal = require('../../mocks/basket.js').basket;
 var Order = require('../../mocks/order');
+var Logger = require('../../mocks/logger');
 var urlStub = sinon.stub();
 var getPrivacyCacheStub = sinon.stub();
 var mockedAuthStatus = 'AUTH_OK';
@@ -20,7 +21,12 @@ describe('komojuHelpers', function () {
     var komojuHelper = proxyquire('../../../cartridges/int_komoju_common/cartridge/scripts/komojuHelpers', {
         'dw/system/Transaction': {
             wrap: function (callback) {
-                return callback();
+                return callback.call();
+            }
+        },
+        'dw/util/Currency': {
+            getCurrency: function () {
+                return 'currency';
             }
         },
         'dw/customer/CustomerMgr': {
@@ -30,6 +36,7 @@ describe('komojuHelpers', function () {
             loginCustomer: function () {}
         },
         'dw/web/URLUtils': sinon.spy(),
+        'dw/system/Logger': new Logger(),
         '*/cartridge/scripts/middleware/csrf': sinon.spy(),
         '*/cartridge/scripts/middleware/userLoggedIn': sinon.spy,
         '*/cartridge/scripts/middleware/consentTracking': sinon.spy(),
@@ -49,13 +56,43 @@ describe('komojuHelpers', function () {
                 return 'ERROR';
             },
             cancelOrder: function () { return 'ERROR'; },
-            undoFailOrder: function () { return 'ERROR'; },
+            undoFailOrder: function (order) {
+                if (!order) {
+                    return true;
+                }
+                return 'ERROR';
+            },
             createOrder: function () { return new Order(); }
 
         },
         'dw/system/Status': { ERROR: 'ERROR' },
         'dw/system/Session': sinon.spy(),
         '*/cartridge/services/komojuServiceCreateSession': {
+            KomojuService: {
+                getURL: function () {
+                    return 'www.google.com';
+                },
+                setURL: function () {
+                    return {
+                        call: function () {
+                            return {
+                                result: {
+                                    error: 0,
+                                    status: 'OK'
+                                }
+                            };
+                        } };
+                },
+                call: function () {
+                    return {
+                        result: {
+                            error: 0,
+                            status: 'OK'
+                        }
+                    };
+                }
+            } },
+        '*/cartridge/services/komojuServiceCancelSession': {
             KomojuService: {
                 getURL: function () {
                     return 'www.google.com';
@@ -112,18 +149,17 @@ describe('komojuHelpers', function () {
         setinstruments: function () {
             return { error: false };
         },
+        setInstrumentFromAuthorizeWebHook: function () {
+            return { error: false };
+        },
         cancelOrder: function () {
             return { error: false };
         },
         undoFail: function () { return { error: false }; },
-        deleteBasketIfPresent: function () {
-            return { error: false };
-        },
         'dw/order/BasketMgr': { getCurrentBasket: function () {
           // sinon.spy();
             return basketemodal;
         } },
-        'dw/system/Logger': { warn: function () { return true; } },
         '*/cartridge/scripts/hooks/fraudDetection': { fraudDetection: function () {
             return 0;
         }
@@ -169,9 +205,27 @@ describe('komojuHelpers', function () {
         assert.deepEqual(result, { result: { error: 0, status: 'OK' } });
     });
 
+    it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{credit_card}', function () {
+        getPrivacyCacheStub.returns(null);
+        var obj = { object: { payment: { payment_details: { type: 'credit_card', brand: 'visa', last_four_digits: '4242', year: '2026', month: 10 }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'JPY' } };
+
+        var result = komojuHelper.setinstruments(obj, new Order());
+
+
+        assert.deepEqual(result, true);
+    });
+    it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{konbini}', function () {
+        getPrivacyCacheStub.returns(null);
+        var obj = { object: { payment: { payment_details: { type: 'konbini', store: 'seven-eleven' }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'USD' } };
+
+        var result = komojuHelper.setinstruments(obj, new Order());
+
+
+        assert.deepEqual(result, true);
+    });
     it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{paypay} ', function () {
         getPrivacyCacheStub.returns(null);
-        var obj = { object: { payment: { payment_details: { type: 'paypay' } } } };
+        var obj = { object: { payment: { payment_details: { type: 'paypay' }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'USD' } };
 
         var result = komojuHelper.setinstruments(obj, new Order());
 
@@ -195,22 +249,10 @@ describe('komojuHelpers', function () {
         assert.deepEqual(result, true);
     });
 
-    it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{credit_card}', function () {
-        getPrivacyCacheStub.returns(null);
-        var obj = { object: { payment: { payment_details: { type: 'credit_card', brand: 'visa' } } } };
-
-        var result = komojuHelper.setinstruments(obj, new Order());
-
-
-        assert.deepEqual(result, true);
-    });
 
     it('expected to throw error from failorder function', function () {
         getPrivacyCacheStub.returns(null);
-        var obj = { object: { payment: { payment_details: { type: 'credit_card', brand: 'visa' } } } };
-
-
-        expect(komojuHelper.failorder.bind(komojuHelper, obj, new Order())).to.throw('');
+        expect(komojuHelper.failorder.bind(komojuHelper, new Order())).to.throw('');
     });
 
     it('expected to throw error from cancelOrder function', function () {
@@ -226,18 +268,12 @@ describe('komojuHelpers', function () {
 
         expect(komojuHelper.undoFail.bind(komojuHelper, new Order())).to.throw('');
     });
-
-
-    it('expected error from  deleteBasketIfPresent function to be false', function () {
+    it('expected to not throw error from undoFail function', function () {
         getPrivacyCacheStub.returns(null);
-        var CurrentBaskettemp = require('../../mocks/basket');
-        var tempBasket = new CurrentBaskettemp();
-        var result = komojuHelper.deleteBasketIfPresent(new CurrentBaskettemp());
 
 
-        assert.deepEqual(result, tempBasket);
+        expect(komojuHelper.undoFail.bind(komojuHelper)).to.not.throw();
     });
-
     it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{linepay}', function () {
         getPrivacyCacheStub.returns(null);
         var obj = { object: { payment: { payment_details: { type: 'linepay' } } } };
@@ -247,15 +283,7 @@ describe('komojuHelpers', function () {
 
         assert.deepEqual(result, true);
     });
-    it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{konbini}', function () {
-        getPrivacyCacheStub.returns(null);
-        var obj = { object: { payment: { payment_details: { type: 'konbini' } } } };
 
-        var result = komojuHelper.setinstruments(obj, new Order());
-
-
-        assert.deepEqual(result, true);
-    });
     it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{merpay}', function () {
         getPrivacyCacheStub.returns(null);
         var obj = { object: { payment: { payment_details: { type: 'merpay' } } } };
@@ -285,7 +313,15 @@ describe('komojuHelpers', function () {
     });
     it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{net_cash}', function () {
         getPrivacyCacheStub.returns(null);
-        var obj = { object: { payment: { payment_details: { type: 'net_cash', prepaid_cards: ['0000000000000000'] } } } };
+        var obj = { object: { payment: { payment_details: { type: 'net_cash', prepaid_cards: [{ last_four_digits: '1000' }] }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'USD' } };
+
+        var result = komojuHelper.setinstruments(obj, new Order());
+
+        assert.deepEqual(result, true);
+    });
+    it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{net_cash} and prepaid card is not defined', function () {
+        getPrivacyCacheStub.returns(null);
+        var obj = { object: { payment: { payment_details: { type: 'net_cash', prepaid_cards: [] }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'USD' } };
 
         var result = komojuHelper.setinstruments(obj, new Order());
 
@@ -293,7 +329,16 @@ describe('komojuHelpers', function () {
     });
     it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{web_money}', function () {
         getPrivacyCacheStub.returns(null);
-        var obj = { object: { payment: { payment_details: { type: 'web_money', prepaid_cards: ['0000000000000000'] } } } };
+        var obj = { object: { payment: { payment_details: { type: 'web_money', prepaid_cards: [{ last_four_digits: '1000' }] }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'USD' } };
+
+        var result = komojuHelper.setinstruments(obj, new Order());
+
+
+        assert.deepEqual(result, true);
+    });
+    it('should return result as no error by calling setinstrument function of  komojuhelpers payment method:{web_money} and prepaid card is not defined', function () {
+        getPrivacyCacheStub.returns(null);
+        var obj = { object: { payment: { payment_details: { type: 'web_money', prepaid_cards: [] }, currency: 'JPY', payment_method_fee: 1013.2345 }, currency: 'USD' } };
 
         var result = komojuHelper.setinstruments(obj, new Order());
 
@@ -363,11 +408,29 @@ describe('komojuHelpers', function () {
 
         assert.deepEqual(result, true);
     });
+    it('should return result as no error by calling setInstrumentFromAuthorizeWebHook function of  komojuhelpers payment method:{konbini}', function () {
+        getPrivacyCacheStub.returns(null);
+        var obj = { data: { payment_details: { type: 'konbini' }, payment_method_fee: 1013.2345, amount: 1013.2345 } };
+
+        var result = komojuHelper.setInstrumentFromAuthorizeWebHook(obj, new Order());
+
+
+        assert.deepEqual(result, true);
+    });
+    it('should return result as no error by calling setInstrumentFromAuthorizeWebHook function of  komojuhelpers payment method:{bank_transfer}', function () {
+        getPrivacyCacheStub.returns(null);
+        var obj = { data: { payment_details: { type: 'bank_transfer' }, payment_method_fee: 1013.2345, amount: 1013.2345 } };
+
+        var result = komojuHelper.setInstrumentFromAuthorizeWebHook(obj, new Order());
+
+
+        assert.deepEqual(result, true);
+    });
     it('returns available payment methods', function () {
         getPrivacyCacheStub.returns(null);
 
         var result = komojuHelper.returnArrayOfObj();
-        var check = [{ id: 'konbini', enabled: true }];
+        var check = [{ currency: 'JPY', id: 'konbini', enabled: true }];
 
         assert.deepEqual(result, check);
     });
@@ -380,9 +443,26 @@ describe('komojuHelpers', function () {
 
         assert.deepEqual(result, true);
     });
+    it('webhooks signature unequaled', function () {
+        getPrivacyCacheStub.returns(null);
+        var body = { status: 'ok' };
+        var komojuSignature = 'wrong';
+        var result = komojuHelper.verifyWebhookCall(body, komojuSignature);
+        // var check = { c_availablePaymenrMethods: [{ method1: { id: 'konbini', displayValue: { en: 'Konbini', ja: 'コンビニ', ko: '편의점' }, enabled: true, currency: 'JPY' } }] };
+
+        assert.deepEqual(result, false);
+    });
     it('creates order ', function () {
         getPrivacyCacheStub.returns(null);
         var tempOrderNumber = '0000321';
+        var CurrentBaskettemp = require('../../mocks/basket');
+        var result = komojuHelper.createOrder(new CurrentBaskettemp(), tempOrderNumber);
+        var check = new Order();
+        assert.equal(typeof result, typeof check);
+    });
+    it('creates order without order no.', function () {
+        getPrivacyCacheStub.returns(null);
+        var tempOrderNumber = '';
         var CurrentBaskettemp = require('../../mocks/basket');
         var result = komojuHelper.createOrder(new CurrentBaskettemp(), tempOrderNumber);
         var check = new Order();

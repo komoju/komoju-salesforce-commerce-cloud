@@ -177,12 +177,6 @@
                             <div class="komoju-info">
                                 ${Resource.msg('paymentInstrument.custom.komojuProcessingCurrency', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuProcessingCurrency}
                             </div>
-                            <isif condition="${paymentInstrument.custom.komojuProcessingFee != null}">
-                                <div class="komoju-info">
-                                    ${Resource.msg('paymentInstrument.custom.komojuProcessingFee', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuProcessingFee}
-                                </div>
-                            <iselse/>
-                            </isif>
                             <div class="komoju-info">
                                 ${Resource.msg('paymentInstrument.custom.komojuExchangeRate', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuExchangeRate}
                             </div>

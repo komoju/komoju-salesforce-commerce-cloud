@@ -8,7 +8,6 @@
 var server = require('server');
 var URLUtils = require('dw/web/URLUtils');
 var Logger = require('dw/system/Logger');
-var Resource = require('dw/web/Resource');
 var csrfProtection = require('*/cartridge/scripts/middleware/csrf');
 var consentTracking = require('*/cartridge/scripts/middleware/consentTracking');
 
@@ -88,15 +87,6 @@ server.prepend(
                     method.ID = object.id;
                     method.subTypes = object.subTypes;
                     method.displayName = object.displayValue[locale];
-                    if (object.currency !== currency) {
-                        if (currency === 'JPY') {
-                            method.currency = '(' + Resource.msgf('japanese.currency.msg', 'komojuPayment', null, object.currency) + ')';
-                        } else {
-                            method.currency = '(' + Resource.msgf('english.currency.msg', 'komojuPayment', null, object.currency) + ')';
-                        }
-                    } else {
-                        method.currency = '';
-                    }
                     method.enabled = object.enabled;
                     if (object.enabled !== undefined && object.enabled === true && object.id !== 'credit_card') {
                         allPaymentMethods.push(method);

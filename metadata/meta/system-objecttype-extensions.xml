@@ -149,7 +149,7 @@
     <type-extension type-id="OrderPaymentInstrument">
         <custom-attribute-definitions>
             <attribute-definition attribute-id="transactionStatus">
-                <display-name xml:lang="x-default">Transaction Status</display-name>
+                <display-name xml:lang="x-default">KOMOJU Transaction Status</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
@@ -177,14 +177,14 @@
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="brand">
-                <display-name xml:lang="x-default">Brand</display-name>
+                <display-name xml:lang="x-default">KOMOJU Brand</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>
                 <min-length>0</min-length>
             </attribute-definition>
             <attribute-definition attribute-id="prepaidCardLastDigits">
-                <display-name xml:lang="x-default">Prepaid Card Last Digits</display-name>
+                <display-name xml:lang="x-default">KOMOJU Prepaid Card Last Digits</display-name>
                 <type>string</type>
                 <mandatory-flag>false</mandatory-flag>
                 <externally-managed-flag>false</externally-managed-flag>

@@ -79,10 +79,12 @@ function initEmailAddress(cart) {
 function returnToForm(cart, params) {
     var pageMeta = require('*/cartridge/scripts/meta');
     // if the payment method is set to gift certificate get the gift certificate code from the form
-    if (!empty(cart.getPaymentInstrument()) && cart.getPaymentInstrument().getPaymentMethod() === PaymentInstrument.METHOD_GIFT_CERTIFICATE) {
-        app.getForm('billing').copyFrom({
-            giftCertCode: cart.getPaymentInstrument().getGiftCertificateCode()
-        });
+    if (cart.getPaymentInstruments().length) {
+        if (!empty(cart.getPaymentInstruments()[0]) && cart.getPaymentInstruments()[0].getPaymentMethod() === PaymentInstrument.METHOD_GIFT_CERTIFICATE) {
+            app.getForm('billing').copyFrom({
+                giftCertCode: cart.getPaymentInstruments()[0].getGiftCertificateCode()
+            });
+        }
     }
 
     pageMeta.update({
@@ -120,21 +122,12 @@ function returnToForm(cart, params) {
                 var method = {};
                 var object = currentPaymentMethod[paymentMethodKey];
                 method.ID = object.id;
+                method.subTypes = object.subTypes;
                 method.displayName = object.displayValue[locale];
-
-                if (object.currency !== currency) {
-                    if (currency === 'JPY') {
-                        method.currency = '(' + Resource.msgf('japanese.currency.msg', 'komojuPayment', null, object.currency) + ')';
-                    } else {
-                        method.currency = '(' + Resource.msgf('english.currency.msg', 'komojuPayment', null, object.currency) + ')';
-                    }
-                } else {
-                    method.currency = '';
-                }
                 method.enabled = object.enabled;
                 if (method.enabled !== undefined && method.enabled === true && method.ID !== 'credit_card') {
                     allPaymentMethod.push(method);
-                } else if (method.enabled !== undefined && method.enabled === true && method.ID === 'credit_card' && method.currency === currency) {
+                } else if (method.enabled !== undefined && method.enabled === true && method.ID === 'credit_card' && object.currency === currency) {
                     allPaymentMethod.push(method);
                 }
             });

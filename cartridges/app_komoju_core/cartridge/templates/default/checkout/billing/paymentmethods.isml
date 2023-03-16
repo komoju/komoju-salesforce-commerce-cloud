@@ -11,7 +11,7 @@
 					<em>${Resource.msg('global.requiredfield', 'locale', null)}</em></span></div>
 		</legend>
 
-		<div class="payment-method-options form-indent">
+		<div class="payment-method-options form-indent payment-method-tab">
 
 			<isloop items="${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.options}"
 				var="paymentMethodType">
@@ -30,7 +30,7 @@
 							condition="${paymentMethodType.value == pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlValue}">checked="checked"
 </isif> />
 </div>
-<label for="is-${radioID}">
+<label for="is-${radioID}" class="payment-method-label">
 	<isprint value="${Resource.msg(paymentMethodType.label, 'forms', null)}" /></label>
 </div>
 
@@ -51,7 +51,7 @@
 	--------------------------------------------------------------
 </iscomment>
 
-<div class="payment-method <isif condition=" ${empty(pdict.selectedPaymentID) || pdict.selectedPaymentID == 'CREDIT_CARD'}">payment-method-expanded</isif>" data-method="CREDIT_CARD">
+<div class="payment-method <isif condition=" ${dw.order.PaymentMgr.getPaymentMethod('CREDIT_CARD').isActive() && pdict.selectedPaymentID == 'CREDIT_CARD'}">payment-method-expanded</isif>" data-method="CREDIT_CARD">
 
 	<iscomment>display select box with stored credit cards if customer is authenticated</iscomment>
 	<isif condition="${pdict.CurrentCustomer.authenticated && !empty(pdict.ApplicableCreditCards)}">
@@ -174,22 +174,17 @@
 	    <h4>${Resource.msg('no.payment.method', 'komojuPayment', null)}</h4>
 	<iselse/>
 	<div class="emt">
-		<h2>${Resource.msg('select.payment.method', 'komojuPayment', null)}</h2><br>
 		<div class="btn-group">
 			<isloop items="${pdict.allPaymentMethod}" var="method" status="loopstate">
 				<div class="labelpay">
 					<input type="radio" class="btn-check" name="options" id="${method.ID}" value="${method.ID}"
 						autocomplete="off" ${loopstate.first ? 'checked' : ''}/>
-					<label class="" for="${method.ID}">
-						<img class="credit-card-option" src="https://komoju.com/payment_methods/${method.ID}.svg"
-							width="100" height="45" alt="KOMOJU Payment" title="KOMOJU Payment"> </label>
-
+					<label class="methodSvg" for="${method.ID}">
 					<div class="he">
 						<isprint value="${method.displayName}" encoding="on" />
 					</div>
-					<div class="he">
-						<isprint value="${method.currency}" encoding="on" />
-					</div>
+						<img class="credit-card-option paymentMethodImage" src="https://komoju.com/payment_methods/${method.ID}.svg?brands=${method.subTypes}"
+							 alt="KOMOJU Payment" title="KOMOJU Payment"> </label>
 
 				</div>
 			</isloop>

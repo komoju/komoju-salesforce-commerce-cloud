@@ -141,15 +141,17 @@
                 ui.item.addClass("selected");
                 ui.item.children().eq(0).addClass("iconOnDrag");
                 ui.item.children().eq(1).addClass("dragNameCurrency");
-                ui.item.children().eq(2).addClass("dragMethodImage");
-                ui.item.children().eq(3).addClass("toggleButton");
+                ui.item.children().eq(2).addClass("dragCurrency");
+                ui.item.children().eq(3).addClass("dragMethodImage");
+                ui.item.children().eq(4).addClass("toggleButton");
             },
             stop: function (e, ui) {
                 ui.item.removeClass("selected");
                 ui.item.children().eq(0).removeClass("iconOnDrag");
                 ui.item.children().eq(1).removeClass("dragNameCurrency");
-                ui.item.children().eq(2).removeClass("dragMethodImage");
-                ui.item.children().eq(3).removeClass("toggleButton");
+                ui.item.children().eq(2).removeClass("dragCurrency");
+                ui.item.children().eq(3).removeClass("dragMethodImage");
+                ui.item.children().eq(4).removeClass("toggleButton");
                 komojuAllPaymentMethods = {};
                 $(this).find("tr").each(function (index) {
                     if(index > 0){

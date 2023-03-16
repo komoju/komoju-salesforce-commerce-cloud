@@ -211,7 +211,6 @@ function KomojuOrder() {
     // Places the order
     var orderStatus;
     if (status !== null && status !== 2) {
-        var currentBasketTemp = BasketMgr.getCurrentBasket();
         orderStatus = order.getStatus().toString();
         if (orderStatus === 'CREATED') {
             placeOrderResult = Order.submit(order);
@@ -224,13 +223,6 @@ function KomojuOrder() {
             });
         }
         session.privacy.session_id = null;
-        if (currentBasketTemp !== null) {
-            komojuHelper.deleteBasketIfPresent(currentBasketTemp);
-            Transaction.wrap(function () {
-                var cart = Cart.get();
-                cart.calculate();
-            });
-        }
     }
 
 
@@ -351,6 +343,7 @@ function geturl() {
     session.privacy.tempOrderNumber = tempOrderNumber;
 
     var name = currentBasket.billingAddress.fullName;
+    var email = currentBasket.customerEmail;
     var address1 = currentBasket.shipments[0].shippingAddress.address1;
     var address2 = currentBasket.shipments[0].shippingAddress.address2;
     var postalCode = currentBasket.shipments[0].shippingAddress.postalCode;
@@ -365,11 +358,18 @@ function geturl() {
     var komojuExchangeRate;
     var komojuCancelSessionResult;
     var previousSessionId;
+    var noCentCurrency = [
+        'DIF', 'CLP', 'BIF',
+        'GNF', 'JPY', 'KMF',
+        'KRW', 'MGA', 'PYG',
+        'RWF', 'UGX', 'VND',
+        'VUV', 'XAF', 'XOF',
+        'XPF'];
 
-    if (currency === 'USD' || currency === 'EUR') {
-        updatedAmount = totalGrossPrice * 100;
-    } else {
+    if (noCentCurrency.includes(currency)) {
         updatedAmount = totalGrossPrice;
+    } else {
+        updatedAmount = totalGrossPrice * 100;
     }
     if (locale.length > 2) {
         locale = locale.slice(0, 2);
@@ -384,6 +384,7 @@ function geturl() {
         cancel_url: cancelUrl,
         amount: updatedAmount,
         currency: currency,
+        email: email,
         'payment_data[shipping_address][zipcode]': postalCode,
         'payment_data[shipping_address][street_address1]': address1,
         'payment_data[shipping_address][street_address2]': address2,

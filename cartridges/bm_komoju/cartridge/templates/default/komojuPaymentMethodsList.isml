@@ -43,8 +43,9 @@
                 class="table table-striped table-bordered table-sm">
                 <thead>
                     <tr>
-                    <th class="menuIcon"></th>
+                        <th class="menuIcon"></th>
                         <th class="left paymentMethodName"></th>
+                        <th class="left paymentMethodCurrency"></th>
                         <th class="left"></th>
                         <th class="right"></th>
                     </tr>
@@ -59,6 +60,8 @@
 
                             <td class="bold left" nowrap="nowrap" data-komoju-method-id = ${komojuMethod.id} data-komoju-method-currency = ${komojuMethod.currency}>
                                 <span class="inputTitle">${komojuMethod.name}</span>
+                            </td>
+                            <td class="bold left">
                                 <span class="inputTitle currencyText">${komojuMethod.currency}</span>
                             </td>
 
@@ -103,6 +106,7 @@
                             <p>${Resource.msg('komoju.secret.descFirst', 'komojuPaymentMethods', null)} <span><a
                                         href="https://komoju.com/admin/merchant_settings">${Resource.msg('komoju.secret.descSecond', 'komojuPaymentMethods', null)}</a></span></p>
                         </isif>
+                        <p>${Resource.msg('komoju.secret.note', 'komojuPaymentMethods', null)}</p>
                     </td>
                 </tr>
 

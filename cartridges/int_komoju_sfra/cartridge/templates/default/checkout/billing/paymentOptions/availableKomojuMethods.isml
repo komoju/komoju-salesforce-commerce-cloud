@@ -15,7 +15,6 @@
                     <label class="methodSvg" for="${method.ID}">
                     <div class="he">
                        <isprint value="${method.displayName}" encoding="on" />
-                       <isprint value="${method.currency}" encoding="on" />
                     </div>
                         <img class="credit-card-option komojuPaymentImage" src="https://komoju.com/payment_methods/${method.ID}.svg?brands=${method.subTypes}"
                           alt="Komoju Payment" title="Komoju Payment"/> </label>

@@ -121,13 +121,11 @@ function returnToForm(cart, params) {
             Object.keys(currentPaymentMethod).forEach(function (paymentMethodKey) {
                 var method = {};
                 var object = currentPaymentMethod[paymentMethodKey];
-                method.ID = object.id;
-                method.subTypes = object.subTypes;
-                method.displayName = object.displayValue[locale];
-                method.enabled = object.enabled;
-                if (method.enabled !== undefined && method.enabled === true && method.ID !== 'credit_card') {
-                    allPaymentMethod.push(method);
-                } else if (method.enabled !== undefined && method.enabled === true && method.ID === 'credit_card' && object.currency === currency) {
+                if (object.enabled !== undefined && object.enabled === true && object.currency === currency) {
+                    method.ID = object.id;
+                    method.subTypes = object.subTypes;
+                    method.displayName = object.displayValue[locale];
+                    method.enabled = object.enabled;
                     allPaymentMethod.push(method);
                 }
             });

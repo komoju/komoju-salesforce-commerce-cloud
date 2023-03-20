@@ -84,13 +84,13 @@ server.prepend(
                 Object.keys(currentPaymentMethod).forEach(function (paymentMethodKey) {
                     var method = {};
                     var object = currentPaymentMethod[paymentMethodKey];
-                    method.ID = object.id;
-                    method.subTypes = object.subTypes;
-                    method.displayName = object.displayValue[locale];
-                    method.enabled = object.enabled;
-                    if (object.enabled !== undefined && object.enabled === true && object.id !== 'credit_card') {
+                    if (object.enabled !== undefined && object.enabled === true && object.currency === currency) {
+                        method.ID = object.id;
+                        method.subTypes = object.subTypes;
+                        method.displayName = object.displayValue[locale];
+                        method.enabled = object.enabled;
                         allPaymentMethods.push(method);
-                    } else if (object.enabled !== undefined && object.enabled === true && object.id === 'credit_card' && object.currency === currency) { allPaymentMethods.push(method); }
+                    }
                 });
             });
         }

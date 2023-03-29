@@ -109,8 +109,13 @@ function start(context) {
  * account creation.
  */
 function showConfirmation(order) {
-    var paymentMethod = order.paymentInstrument.custom.komojuPaymentMethodType;
-    var transactionStatus = order.paymentInstrument.custom.transactionStatus;
+    var currentKOMOJUPaymentInstrument = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE');
+    var paymentMethod;
+    var transactionStatus;
+    if (currentKOMOJUPaymentInstrument.length > 0) {
+        paymentMethod = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE')[0].custom.komojuPaymentMethodType;
+        transactionStatus = order.getPaymentInstruments('KOMOJU_HOSTED_PAGE')[0].custom.transactionStatus;
+    }
     if (!customer.authenticated) {
         // Initializes the account creation form for guest checkouts by populating the first and last name with the
         // used billing address.

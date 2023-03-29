@@ -606,7 +606,7 @@ function billing() {
                     // Mark step as fulfilled
 
                     app.getForm('billing').object.fulfilled.value = true;
-                    if (currentBasket.paymentInstrument.paymentMethod !== 'KOMOJU_HOSTED_PAGE') {
+                    if (selectedPaymentMethod.ID !== 'KOMOJU_HOSTED_PAGE') {
                         app.getController('COSummary').Start();
                         return;
                     }

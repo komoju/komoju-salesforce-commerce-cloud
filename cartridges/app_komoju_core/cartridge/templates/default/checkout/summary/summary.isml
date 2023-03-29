@@ -262,7 +262,7 @@
 
 			<input type="hidden" class="urlkomojugeturl" data-url="${URLUtils.url('KomojuController-geturl')}"
 				value="" />
-			<input type="hidden" class="selectedPaymentKomojuGeturl" data-selectedmethod="${pdict.Basket.paymentInstrument.paymentMethod}"
+			<input type="hidden" class="selectedPaymentKomojuGeturl" data-selectedmethod="${pdict.Basket.getPaymentInstruments()[0].paymentMethod}"
 				value="" />
 			<input type="hidden" name="${dw.web.CSRFProtection.getTokenName()}"
 				value="${dw.web.CSRFProtection.generateToken()}" />

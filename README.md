@@ -1,6 +1,5 @@
-![](media/image4.jpg){width="2.630074365704287in"
-height="1.1927088801399826in"}![](media/image3.png){width="2.276042213473316in"
-height="0.7745691163604549in"}
+![DegicaLogo](https://user-images.githubusercontent.com/85248277/229740093-21781ae1-3ccf-4cd0-b8d2-9a2da6d06717.png)
+
 
 <span id="_u3k1739iisqp" class="anchor"></span>
 
@@ -27,7 +26,7 @@ Salesforce Commerce Cloud sites that enable cross-border payments for
 their customers all over the world.
 
 ![PaymentMethods](https://user-images.githubusercontent.com/85248277/229726141-57f82113-3bc8-4f2d-83a7-f635b9760ced.PNG)
-
+![hostedPage](https://user-images.githubusercontent.com/85248277/229741960-ac1c56a1-6795-4bb0-968f-eec77c3f74ba.PNG)
 
 **Features**
 

@@ -1,0 +1,12 @@
+
+<div class="tab-pane  komoju-content " id="komoju-content" role="tabpanel">
+    <fieldset class="payment-form-fields">
+
+        <iscomment> payment method is komoju </iscomment>
+        <input type="hidden" class="form-control" name="${pdict.forms.billingForm.paymentMethod.htmlName}"
+            value="KOMOJU_HOSTED_PAGE"/>
+
+        <isinclude template="checkout/billing/paymentOptions/availableKomojuMethods"/>
+
+    </fieldset>
+</div>

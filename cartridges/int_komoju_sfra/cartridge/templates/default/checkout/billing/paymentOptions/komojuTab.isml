@@ -1,0 +1,9 @@
+<isscript>
+        require('*/cartridge/scripts/assets.js').addCss('/css/availableKomojuMethods.css');
+</isscript>
+
+<li class="nav-item" data-method-id="${paymentOption.ID}">
+       <a  class="nav-link komoju-tab" data-toggle="tab" href="#komoju-content" role="tab">
+        <span>${paymentOption.name}</span>
+    </a>
+</li>

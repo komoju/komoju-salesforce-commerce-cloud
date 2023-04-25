@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extensions xmlns="http://www.demandware.com/xml/bmmodules/2007-12-11"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.demandware.com/xml/bmmodules/2007-12-11 bmext.xsd">
+
+    <!-- =============================================================== -->
+    <!-- ==                                                           == -->
+    <!-- ==  MERCHANT TOOLS MENU EXTENSIONS                           == -->
+    <!-- ==                                                           == -->
+    <!-- =============================================================== -->
+    <!--
+    A custom menu action in the Merchant tools section under orderings
+-->
+
+    <menuaction id="komojuPaymentSettings" menupath="orders" position="100" site="true">
+        <name xml:lang="x-default">KOMOJU Payment Settings</name>
+        <name xml:lang="ja">KOMOJU Payment設定</name>
+        <short_description xml:lang="x-default">This extension allows a merchant setup and modify KOMOJU payment setting</short_description>
+        <short_description xml:lang="ja">KOMOJU Payment設定管理画面</short_description>
+        <description xml:lang="x-default">This extension allows a merchant setup and modify KOMOJU payment setting</description>
+        <description xml:lang="ja">KOMOJU Payment設定管理画面</description>
+        <!-- no icon specified -->
+        <exec pipeline="komojuPayments" node="start"/>
+        <sub-pipelines>
+            <pipeline name="komojuPayments-start"/>
+            <pipeline name="komojuPaymentMethodUpdate-updateAvailableMethods"/>
+            <pipeline name="komojuPaymentMethodUpdate-updateSecretKey"/>
+            <pipeline name="komojuPaymentMethodUpdate-updateEmail"/>
+            <pipeline name="komojuPaymentMethodUpdate-updateToggleEmail"/>
+            <pipeline name="komojuPaymentMethodUpdate-updateAuthenticationCode"/>
+            <pipeline name="komojuPaymentMethodUpdate-updatePaymentMethodOrder"/>
+        </sub-pipelines>
+        <icon>icons/komojuIconBlue.png</icon>
+    </menuaction>
+
+</extensions>

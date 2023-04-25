@@ -1,0 +1,51 @@
+.btn-group {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.he {
+    width: 100%;
+    padding-left: 0.8125rem;
+    text-align: left;
+}
+
+
+.labelpay {
+    display: flex;
+    width: 80%;
+    border-bottom: solid 0.0625rem #c9c9c9;
+    align-items: center;
+    margin-top: 0.625rem;
+    padding-bottom: 0.625rem;
+}
+.methodSvg {
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0rem;
+    margin-top: 0rem !important;
+}
+
+#methodNotSupported{
+    display: none;
+}
+input[type=radio] {
+    box-sizing: border-box;
+    padding: 0;
+    width: 1rem;
+    height: 1.3125rem;
+    accent-color: black;
+  }
+  .paymentMethodImage {
+    height: 1.75rem;
+}
+
+.payment-method-options.form-indent.payment-method-tab {
+    margin-left: 11.4%;
+}
+label.payment-method-label {
+    float: inherit;
+    margin-top: 0.1875rem;
+}

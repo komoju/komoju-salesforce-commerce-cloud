@@ -1,0 +1,157 @@
+.toggle {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 3.875rem;
+  height: 2rem;
+  display: inline-block;
+  position: relative;
+  border-radius: 3.125rem;
+  overflow: hidden;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: #707070;
+  transition: background-color ease 0.3s;
+  margin: 0;
+}
+
+.toggle:before {
+  content: "on off";
+  display: block;
+  position: absolute;
+  z-index: 2;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: #fff;
+  left: 0.125rem;
+  top: 0.125rem;
+  border-radius: 50%;
+  font: 0.625rem/1.75rem Helvetica;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-indent: -1.375rem;
+  word-spacing: 2.3125rem;
+  color: #fff;
+  text-shadow: -0.0625rem -0.0625rem rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+  box-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
+  transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+}
+
+.toggle:checked {
+  background-color: #4cd964;
+}
+
+.toggle:checked:before {
+  left: 2rem;
+}
+
+.paymentMethodName {
+  width: 21% !important;
+}
+.paymentMethodCurrency {
+  width: 20% !important;
+}
+.paymentHeading {
+  width: 100%;
+  font-size: 1.125rem;
+}
+
+.fillAvailable {
+  width: -webkit-fill-available;
+}
+.emptyBlock, .emptyTR {
+    height: 1rem;
+}
+
+.flexProp {
+  display: flex;
+  align-items: center;
+}
+
+.pleaseUpdateNote {
+  text-align: center;
+}
+
+.inputText {
+  border-radius: 0.1875rem;
+  border: 0.0625rem solid #4cd964;
+  padding: 0.3125rem 0.3125rem;
+  font-size: 1.0625rem;
+}
+
+.webhookEvent {
+  width: 10rem;
+}
+
+.updateBtn {
+  font-size: 0.875rem;
+  border-radius: 0.1875rem;
+  border: 0.0625rem solid #4cd964;;
+  padding: 0.4375rem 0.5625rem;
+  color: white;
+  cursor: pointer;
+  background-color: #4cd964;
+}
+
+.copy_to_clipboard_message {
+  position: fixed;
+  left: 50%;
+  top: 5rem;
+  display:none;
+}
+
+.dw-nc-message-info {
+  position: relative;
+  left: -50%;
+  background-color: #4cd964;
+  color: white;
+  font-size: 0.875rem;
+  margin: 1em auto;
+  width: fit-content;
+}
+
+.selected {
+  width: 80% !important;
+  height:3.125rem !important;
+  display: flex;
+  flex-direction: row;
+  border: 0.1875rem solid #93da8b;
+  box-sizing: border-box;
+  padding-top:0.3125rem;
+  align-items: center;
+}
+.toggleButton {
+  text-align: right !important;
+  width:10% !important;
+  padding-top: 0.1rem !important;
+}
+.dragNameCurrency {
+  width:22% !important;
+  padding-left: 0.8rem !important;
+}
+.dragCurrency {
+  width:19% !important;
+}
+
+.menuIcon {
+  width:3.125rem;
+}
+.paymentMethodTypeImage{
+  height: 1.875rem !important;
+  margin-left: 0.9375rem !important;
+}
+
+.dragMethodImage{
+  text-align: left !important;
+  width: 43% !important;
+}
+
+ #methodTable{
+  border-collapse: separate;
+  border-spacing: 0rem 1.5em;
+}
+span.inputTitle.currencyText {
+  padding-left: 1.25rem;
+}

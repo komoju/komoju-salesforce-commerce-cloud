@@ -1,0 +1,86 @@
+<isscript>
+    var order = pdict.Order;
+    var processor = dw.order.PaymentMgr.getPaymentMethod('KOMOJU_HOSTED_PAGE').getPaymentProcessor().getID();
+    var paymentInstrument;
+    var paymentInstruments = order.getPaymentInstruments().iterator();
+    if (paymentInstruments.hasNext()) {
+        paymentInstrument = paymentInstruments.next();
+    }
+    var currentCurrency = dw.util.Currency.getCurrency(paymentInstrument.paymentTransaction.amount.currencyCode);
+    var currencySymbol = currentCurrency.symbol;
+</isscript>
+
+<div class="komoju-transaction-table">
+    <div class="processor-div">
+        <div class="komoju-processor">
+            ${paymentInstrument.paymentMethod}
+        </div>
+        <div class="komoju-processor">
+            ${Resource.msg('komoju.processor', 'komojuPaymentInstrument', null)} ${processor}
+        </div>
+        <div class="komoju-processor">
+            ${Resource.msg('komoju.transaction', 'komojuPaymentInstrument', null)} ${order.orderNo}
+        </div>
+        <div class="komoju-processor">
+            ${Resource.msg('komoju.amount', 'komojuPaymentInstrument', null)}
+            ${currencySymbol}${paymentInstrument.paymentTransaction.amount.value}
+        </div>
+    </div>
+    <p class="emp-p"></p>
+    <table>
+        <tbody>
+            <isif condition="${paymentInstrument.custom.transactionStatus != null}">
+                <div class="komoju-info">
+                    ${Resource.msg('paymentInstrument.custom.transactionStatus', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.transactionStatus}
+                </div>
+            <iselse/>
+                <div class="komoju-info">
+                    ${Resource.msg('komoju.no.info', 'komojuPaymentInstrument', null)}
+                </div>
+            </isif>
+            <isif condition="${paymentInstrument.custom.komojuPaymentId != null}">
+                <div class="komoju-info">
+                    ${Resource.msg('paymentInstrument.custom.komojuPaymentId', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuPaymentId}
+                </div>
+                <div class="komoju-info">
+                    ${Resource.msg('paymentInstrument.custom.komojuPaymentMethodType', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuPaymentMethodType}
+                </div>
+                <isif condition="${paymentInstrument.custom.store !== null}">
+                    <div class="komoju-info">
+                        ${Resource.msg('paymentInstrument.custom.store', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.store}
+                    </div>
+                <iselse/>
+                </isif>
+                <isif condition="${paymentInstrument.custom.brand !== null}">
+                    <div class="komoju-info">
+                        ${Resource.msg('paymentInstrument.custom.brand', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.brand}
+                    </div>
+                <iselse/>
+                </isif>
+                <isif condition="${paymentInstrument.custom.prepaidCardLastDigits !== null}">
+                    <div class="komoju-info">
+                        ${Resource.msg('paymentInstrument.custom.prepaidCardLastDigits', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.prepaidCardLastDigits}
+                    </div>
+                <iselse/>
+                </isif>
+                <div class="komoju-info">
+                    ${Resource.msg('paymentInstrument.custom.komojuProcessingCurrency', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuProcessingCurrency}
+                </div>
+                <isif condition="${paymentInstrument.custom.komojuProcessingFee != null}">
+                    <div class="komoju-info">
+                        ${Resource.msg('paymentInstrument.custom.komojuProcessingFee', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuProcessingFee}
+                    </div>
+                <iselse/>
+                </isif>
+                <div class="komoju-info">
+                    ${Resource.msg('paymentInstrument.custom.komojuExchangeRate', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuExchangeRate}
+                </div>
+                <div class="komoju-info">
+                    ${Resource.msg('paymentInstrument.custom.komojuExchangeAmount', 'komojuPaymentInstrument', null)}&nbsp;${paymentInstrument.custom.komojuExchangeAmount}
+                </div>
+            <iselse/>
+            </isif>
+        </tbody>
+    </table>
+</div>
+<script src="${URLUtils.staticURL('/js/paymentInstrumentKomoju.js')}"></script>

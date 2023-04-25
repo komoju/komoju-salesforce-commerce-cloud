@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns="http://www.demandware.com/xml/impex/metadata/2006-10-31">
+    <custom-type type-id="komojuPaymentMethodsObjectType">
+        <display-name xml:lang="x-default">KOMOJU Payment Methods Object Type</display-name>
+        <description xml:lang="x-default">This custom object type is used to store the payment methods visible on storefront and edited by the merchant.</description>
+        <staging-mode>no-staging</staging-mode>
+        <storage-scope>site</storage-scope>
+        <key-definition attribute-id="paymentMethodKey">
+            <type>int</type>
+        </key-definition>
+        <attribute-definitions>
+            <attribute-definition attribute-id="availableKomojuPaymentMethods">
+                <display-name xml:lang="x-default">Available KOMOJU Payment Methods</display-name>
+                <type>text</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuSecretKey">
+                <display-name xml:lang="x-default">KOMOJU Secret Key</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+             <attribute-definition attribute-id="komojuEmailLocale">
+                <display-name xml:lang="x-default">KOMOJU Email Locale</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="komojuEmail">
+                <display-name xml:lang="x-default">KOMOJU Email</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="emailToggleValue">
+                <display-name xml:lang="x-default">Email Toggle Value</display-name>
+                <type>boolean</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+            <attribute-definition attribute-id="webhooksAuthenticationCode">
+                <display-name xml:lang="x-default">Webhooks Authentication Code</display-name>
+                <type>string</type>
+                <localizable-flag>false</localizable-flag>
+                <mandatory-flag>false</mandatory-flag>
+                <externally-managed-flag>false</externally-managed-flag>
+            </attribute-definition>
+        </attribute-definitions>
+        <group-definitions>
+            <attribute-group group-id="komojuCustomObjectGrouping">
+                <display-name xml:lang="x-default">KOMOJU Custom Object Grouping</display-name>
+                <attribute attribute-id="paymentMethodKey"/>
+                <attribute attribute-id="availableKomojuPaymentMethods"/>
+                <attribute attribute-id="komojuSecretKey"/>
+                <attribute attribute-id="komojuEmail"/>
+                <attribute attribute-id="emailToggleValue"/>
+                <attribute attribute-id="webhooksAuthenticationCode"/>
+                <attribute attribute-id="komojuEmailLocale"/>
+            </attribute-group>
+        </group-definitions>
+</custom-type>
+</metadata>

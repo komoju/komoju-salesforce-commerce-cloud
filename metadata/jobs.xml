@@ -15,8 +15,8 @@
             <run-recurring enabled="true">
                 <recurrence>
                     <date-from>2023-01-01Z</date-from>
-                    <start-time>14:00:00.000Z</start-time>
-                    <interval>1d</interval>
+                    <start-time>00:00:00.000Z</start-time>
+                    <interval>30m</interval>
                     <day-of-week/>
                 </recurrence>
             </run-recurring>
@@ -39,7 +39,7 @@
                 <recurrence>
                     <date-from>2023-01-01Z</date-from>
                     <start-time>00:00:00.000Z</start-time>
-                    <interval>1h</interval>
+                    <interval>30m</interval>
                     <day-of-week/>
                 </recurrence>
             </run-recurring>

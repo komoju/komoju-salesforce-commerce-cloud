@@ -6,7 +6,9 @@ gateway, trusted by thousands of merchants, entrepreneurs and e-commerce stores 
 Now with the KOMOJU payment gateway cartridge, store owners on Salesforce Commerce Cloud can also easily integrate and use KOMOJU to enable cross-border payments for customers all over the world.
 
 ## Installation
-[Cartridge Installation and User Guide](https://github.com/degica/komoju-salesforce-commerce-cloud/blob/main/komoju-cartridge-installation-and-user-guide.pdf)
+[Cartridge Installation and User Guide - English](https://github.com/degica/komoju-salesforce-commerce-cloud/blob/main/komoju-cartridge-installation-and-user-guide-en.pdf)
+
+[Cartridge Installation and User Guide - 日本語](https://github.com/degica/komoju-salesforce-commerce-cloud/blob/main/komoju-cartridge-installation-and-user-guide-ja.pdf)
 
 ## Features
 -   Compatible with both SFRA and SiteGenesis sites.

@@ -518,6 +518,15 @@ function HandleWebHooksCancelled() {
     var webhookCallVerified = komojuHelper.verifyWebhookCall(bodyToEncode, komojuSignature);
     requestData = JSON.parse(request.httpParameterMap.requestBodyAsString);
     var currentOrder = OrderMgr.searchOrder('custom.komojuPaymentId = {0}', requestData.data.id);
+
+    // Fallback to session id
+    if (!currentOrder) {
+        var sessionIdKomoju = JSON.parse(req.body).data.session;
+        currentOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
+    }
+
+    customKomojuSourceLogger.info("Komoju Order: " + (currentOrder ? currentOrder.orderNo : "No order found"));
+
     var orderStatus = currentOrder.getStatus().toString();
     if (currentOrder) {
         if (webhookCallVerified) {
@@ -552,7 +561,25 @@ function HandleWebHooksCaptureComplete() {
     var body = JSON.parse(request.httpParameterMap.requestBodyAsString);
     var paymentInstrument;
     var orderStatus;
+
+    try {
+        Transaction.wrap(function () {
+            order.custom.komojuPaymentId = paymentIdKomoju;
+        });
+    } catch (e) {
+        Logger.error('Error saving paymentId ' + e.toString() + ' in ' + e.fileName + ':' + e.lineNumber);
+    }
+
     var komojuOrder = OrderMgr.searchOrder('custom.komojuPaymentId = {0}', paymentIdKomoju);
+
+    // Fallback to session id
+    if (!komojuOrder) {
+        var sessionIdKomoju = JSON.parse(req.body).data.session;
+        komojuOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
+    }
+
+    customKomojuSourceLogger.info("Komoju Order: " + (komojuOrder ? komojuOrder.orderNo : "No order found"));
+
     if (komojuOrder) {
         orderStatus = komojuOrder.getStatus().toString();
     }

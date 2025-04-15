@@ -714,7 +714,7 @@ server.post('HandleWebHooksCancelled', function (req, res, next) {
 
     // Fallback to session id
     if (!komojuOrder) {
-        sessionIdKomoju = JSON.parse(req.body).data.session;
+        var sessionIdKomoju = JSON.parse(req.body).data.session;
         komojuOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
     }
 

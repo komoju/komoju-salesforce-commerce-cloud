@@ -268,8 +268,6 @@ server.get('geturl', function (req, res, next) {
     });
     return next();
 });
-
-
 server.get('KomojuOrder', csrfProtection.generateToken, server.middleware.https, function (req, res, next) {
     var BasketMgr = require('dw/order/BasketMgr');
     var URLUtils = require('dw/web/URLUtils');
@@ -650,6 +648,7 @@ server.post('HandleWebHooksRefund', function (req, res, next) {
 });
 server.post('HandleWebHooksCaptureComplete', function (req, res, next) {
     var Order = require('dw/order/Order');
+    var customKomojuSourceLogger = Logger.getLogger('customKomojuSourceLogger', 'customKomojuSourceLogger');
 
     var paymentIdKomoju = JSON.parse(req.body).data.id;
     var body = JSON.parse(req.body);
@@ -661,7 +660,24 @@ server.post('HandleWebHooksCaptureComplete', function (req, res, next) {
 
     var webhookCallVerified = komojuHelpers.verifyWebhookCall(bodyToEncode, komojuSignature);
 
+    try {
+        Transaction.wrap(function () {
+            order.custom.komojuPaymentId = paymentIdKomoju;
+        });
+    } catch (e) {
+        Logger.error('Error saving paymentId in HandleWebHooksCaptureComplete: ' + e.toString());
+    }
+
     var komojuOrder = OrderMgr.searchOrder('custom.komojuPaymentId = {0}', paymentIdKomoju);
+
+    // Fallback to session id
+    if (!komojuOrder) {
+        var sessionIdKomoju = JSON.parse(req.body).data.session;
+        komojuOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
+    }
+
+    customKomojuSourceLogger.info("Komoju Order: " + (komojuOrder ? komojuOrder.orderNo : "No order found"));
+
     if (komojuOrder) {
         orderStatus = komojuOrder.getStatus().toString();
     }
@@ -687,6 +703,7 @@ server.post('HandleWebHooksCaptureComplete', function (req, res, next) {
     return next();
 });
 server.post('HandleWebHooksCancelled', function (req, res, next) {
+    var customKomojuSourceLogger = Logger.getLogger('customKomojuSourceLogger', 'customKomojuSourceLogger');
     var bodyToEncode = req.body;
     var body = JSON.parse(req.body);
     var komojuSignature = req.httpHeaders['x-komoju-signature'];
@@ -694,6 +711,14 @@ server.post('HandleWebHooksCancelled', function (req, res, next) {
     var webhookCallVerified = komojuHelpers.verifyWebhookCall(bodyToEncode, komojuSignature);
     var paymentIdKomoju = JSON.parse(req.body).data.id;
     var komojuOrder = OrderMgr.searchOrder('custom.komojuPaymentId = {0}', paymentIdKomoju);
+
+    // Fallback to session id
+    if (!komojuOrder) {
+        var sessionIdKomoju = JSON.parse(req.body).data.session;
+        komojuOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
+    }
+
+    customKomojuSourceLogger.info("Komoju Order: " + (komojuOrder ? komojuOrder.orderNo : "No order found"));
 
     if (komojuOrder) {
         if (webhookCallVerified) {

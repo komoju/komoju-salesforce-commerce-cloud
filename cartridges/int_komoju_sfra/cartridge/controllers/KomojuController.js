@@ -665,7 +665,7 @@ server.post('HandleWebHooksCaptureComplete', function (req, res, next) {
             order.custom.komojuPaymentId = paymentIdKomoju;
         });
     } catch (e) {
-        Logger.error('Error saving paymentId ' + e.toString() + ' in ' + e.fileName + ':' + e.lineNumber);
+        Logger.error('Error saving paymentId in HandleWebHooksCaptureComplete: ' + e.toString());
     }
 
     var komojuOrder = OrderMgr.searchOrder('custom.komojuPaymentId = {0}', paymentIdKomoju);

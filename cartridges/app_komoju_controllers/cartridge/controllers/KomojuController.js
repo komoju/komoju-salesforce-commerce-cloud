@@ -561,21 +561,23 @@ function HandleWebHooksCaptureComplete() {
     var body = JSON.parse(request.httpParameterMap.requestBodyAsString);
     var paymentInstrument;
     var orderStatus;
-
-    try {
-        Transaction.wrap(function () {
-            order.custom.komojuPaymentId = paymentIdKomoju;
-        });
-    } catch (e) {
-        Logger.error('Error saving paymentId in HandleWebHooksCaptureComplete: ' + e.toString());
-    }
-
     var komojuOrder = OrderMgr.searchOrder('custom.komojuPaymentId = {0}', paymentIdKomoju);
 
     // Fallback to session id
     if (!komojuOrder) {
         var sessionIdKomoju = JSON.parse(req.body).data.session;
         komojuOrder = OrderMgr.searchOrder('custom.komojuSessionId = {0}', sessionIdKomoju);
+
+        // Save komojuPaymentId to order since we had to fallback to session id
+        if (komojuOrder) {
+            try {
+                Transaction.wrap(function () {
+                    komojuOrder.custom.komojuPaymentId = paymentIdKomoju;
+                });
+            } catch (e) {
+                customKomojuSourceLogger.error('Error saving paymentId in HandleWebHooksCaptureComplete: ' + e.toString());
+            }
+        }
     }
 
     customKomojuSourceLogger.info("Komoju Order: " + (komojuOrder ? komojuOrder.orderNo : "No order found"));
